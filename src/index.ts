@@ -66,7 +66,7 @@ const structBuilder = (tokens, openTags = []) => {
         break;
       }
       case TokenType.openTag: {
-        const { result, end } = structBuilder(tokens.slice(i + 1), [
+        const { result } = structBuilder(tokens.slice(i + 1), [
           ...openTags,
           t.value
         ]);
@@ -77,15 +77,13 @@ const structBuilder = (tokens, openTags = []) => {
           value: result
         });
 
-        i += end;
         break;
       }
       case TokenType.closeTag: {
         const lastOpen = openTags[openTags.length - 1];
         if (lastOpen === t.value) {
           return {
-            result: finalResult,
-            end: i + 1
+            result: finalResult
           };
         }
 
@@ -95,7 +93,7 @@ const structBuilder = (tokens, openTags = []) => {
         throw new Error(`Unknown type ${t.type}`);
     }
   }
-  return { result: finalResult, end: finalResult.length + 1 };
+  return { result: finalResult };
 };
 
 const tokenizeAndParse = text => {
