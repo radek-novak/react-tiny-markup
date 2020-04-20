@@ -98,18 +98,18 @@ const entries = obj => Object.keys(obj).map(tc => [tc, obj[tc]]);
 
 test('basic', () => {
   for (let [testInput, expectedOutput] of entries(basicTestCasesMap)) {
-    expect(tokenizeAndParse(testInput).result).toEqual(expectedOutput);
+    expect(tokenizeAndParse(testInput)).toEqual(expectedOutput);
   }
 });
 
 test('unicode', () => {
   for (let [testInput, expectedOutput] of entries(unicodeCasesMap)) {
-    expect(tokenizeAndParse(testInput).result).toEqual(expectedOutput);
+    expect(tokenizeAndParse(testInput)).toEqual(expectedOutput);
   }
 });
 
 test('broken tags', () => {
   for (let [testInput, expectedOutput] of entries(brokenTagsTestCasesMap)) {
-    expect(tokenizeAndParse(testInput).result).toEqual(expectedOutput);
+    expect(tokenizeAndParse(testInput)).toEqual(expectedOutput);
   }
 });
