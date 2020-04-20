@@ -38,7 +38,7 @@ const text = many(anythingExcept(choice([openTag, closeTag]))).map(
 // order matters
 const token = choice([openTag, closeTag, text]);
 
-const fullParser = coroutine(function* () {
+const tokenize = coroutine(function* () {
   const result = [];
 
   while (true) {
@@ -51,48 +51,48 @@ const fullParser = coroutine(function* () {
 });
 
 const structBuilder = (tokens, openTags = []) => {
-  const finalResult = [];
+  const result = [];
 
   for (let i = 0; i < tokens.length; i++) {
-    const t = tokens[i];
+    const token = tokens[i];
 
-    if (t.ignore) continue;
-    t.ignore = true;
+    if (token.ignore) continue;
+    token.ignore = true;
 
-    switch (t.type) {
+    switch (token.type) {
       case TokenType.text: {
-        const { ignore, ...tag } = t;
-        finalResult.push(tag);
+        const { ignore, ...textObj } = token;
+        result.push(textObj);
         break;
       }
       case TokenType.openTag: {
-        finalResult.push({
+        result.push({
           type: 'tag',
-          tagType: t.value,
-          value: structBuilder(tokens.slice(i + 1), [...openTags, t.value])
+          tagType: token.value,
+          value: structBuilder(tokens.slice(i + 1), [...openTags, token.value])
         });
 
         break;
       }
       case TokenType.closeTag: {
         const lastOpen = openTags[openTags.length - 1];
-        if (lastOpen === t.value) {
-          return finalResult;
+        if (lastOpen === token.value) {
+          return result;
         }
 
-        throw new Error(`Expected ${lastOpen} but got ${t.value} instead.`);
+        throw new Error(`Expected ${lastOpen} but got ${token.value} instead.`);
       }
       default:
-        throw new Error(`Unknown type ${t.type}`);
+        throw new Error(`Unknown type ${token.type}`);
     }
   }
-  return finalResult;
+  return result;
 };
 
-const tokenizeAndParse = text => {
-  const tokens = fullParser.run(text).result;
+const parse = text => {
+  const tokens = tokenize.run(text).result;
 
   return structBuilder(tokens);
 };
 
-export { tokenizeAndParse };
+export { parse };
