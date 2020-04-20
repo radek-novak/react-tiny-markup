@@ -9,14 +9,12 @@ import {
   letters
 } from 'arcsecond';
 
-// utils
-const log = text => {
-  console.log(text);
-  console.dir(tokenizeAndParse(text).result, {
-    depth: null
-  });
-  console.log();
-};
+// tag types
+enum TokenType {
+  openTag = 'open-tag',
+  closeTag = 'close-tag',
+  text = 'text'
+}
 
 // tagger
 const tokenTag = (type, customizer = id => id) => value => ({
@@ -27,10 +25,14 @@ const tokenTag = (type, customizer = id => id) => value => ({
 // parser
 const lAngle = char('<');
 const rAngle = char('>');
-const openTag = between(lAngle)(rAngle)(letters).map(tokenTag('open-tag'));
-const closeTag = between(str('</'))(rAngle)(letters).map(tokenTag('close-tag'));
+const openTag = between(lAngle)(rAngle)(letters).map(
+  tokenTag(TokenType.openTag)
+);
+const closeTag = between(str('</'))(rAngle)(letters).map(
+  tokenTag(TokenType.closeTag)
+);
 const text = many(anythingExcept(choice([openTag, closeTag]))).map(
-  tokenTag('text', val => val.join(''))
+  tokenTag(TokenType.text, val => val.join(''))
 );
 
 // order matters
@@ -58,12 +60,12 @@ const structBuilder = (tokens, openTags = []) => {
     t.ignore = true;
 
     switch (t.type) {
-      case 'text': {
+      case TokenType.text: {
         const { ignore, ...tag } = t;
         finalResult.push(tag);
         break;
       }
-      case 'open-tag': {
+      case TokenType.openTag: {
         const { result, end } = structBuilder(tokens.slice(i + 1), [
           ...openTags,
           t.value
@@ -78,7 +80,7 @@ const structBuilder = (tokens, openTags = []) => {
         i += end;
         break;
       }
-      case 'close-tag': {
+      case TokenType.closeTag: {
         const lastOpen = openTags[openTags.length - 1];
         if (lastOpen === t.value) {
           return {
@@ -103,11 +105,3 @@ const tokenizeAndParse = text => {
 };
 
 export { tokenizeAndParse };
-
-// log('abc');
-// log('ab<');
-// log('<a>text</no</nope... now</a>');
-// log('abc<a>a</a>bc<a>de</a>');
-// log('abc<a><b>tagtext</b></a>');
-// log('abc<a><b>tagtext</b></a>');
-// log('abc<a><b>tagtext</b></a>');
