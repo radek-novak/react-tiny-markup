@@ -1,4 +1,4 @@
-import { parse } from './index';
+import { parse } from '../parser';
 
 const basicTestCasesMap = {
   abc: [{ type: 'text', value: 'abc' }],

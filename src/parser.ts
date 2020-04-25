@@ -9,15 +9,34 @@ import {
   letters
 } from 'arcsecond';
 
-// tag types
+// types
 enum TokenType {
   openTag = 'open-tag',
   closeTag = 'close-tag',
   text = 'text'
 }
 
+type Token = {
+  type: TokenType;
+  ignore?: boolean;
+  value: string;
+};
+
+type TextElement = {
+  type: 'text';
+  value: string;
+};
+
+type TagElement = {
+  type: 'tag';
+  tagType: string;
+  value: ParserElement[];
+};
+
+type ParserElement = TextElement | TagElement;
+
 // tagger
-const tokenTag = (type, customizer = id => id) => value => ({
+const tokenTag = (type: TokenType, customizer = id => id) => value => ({
   type,
   value: customizer(value)
 });
@@ -50,8 +69,8 @@ const tokenize = coroutine(function* () {
   return result;
 });
 
-const structBuilder = (tokens, openTags = []) => {
-  const result = [];
+const structBuilder = (tokens: Token[], openTags = []) => {
+  const result = [] as ParserElement[];
 
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
@@ -62,7 +81,7 @@ const structBuilder = (tokens, openTags = []) => {
     switch (token.type) {
       case TokenType.text: {
         const { ignore, ...textObj } = token;
-        result.push(textObj);
+        result.push(textObj as any);
         break;
       }
       case TokenType.openTag: {
@@ -94,5 +113,29 @@ const parse = text => {
 
   return structBuilder(tokens);
 };
+
+// type TagToReactEl = Record<string, any>;
+
+// const ElementRenderer: React.SFC<{
+//   struct: Element[];
+//   map: TagToReactEl;
+// }> = props =>
+//   props.struct.map(
+//     el => (el.type === 'text' ? createElement('span', {}, [el.value]) : null) // createElement('div', {})
+//   );
+
+// const ReactTinyMarkup = (props: {
+//   children: React.ReactNode;
+//   map: TagToReactEl;
+// }) => {
+//   if (typeof props.children === 'string') {
+//     const parsedStruct = parse(text);
+//     return parsedStruct.map(el => {});
+//   }
+
+//   return props.children;
+// };
+
+// export default ReactTinyMarkup;
 
 export { parse };
