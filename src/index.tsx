@@ -1,5 +1,6 @@
 import React, { createElement } from 'react';
 import { parse } from './parser';
+import { tags } from './util';
 
 type TextElement = {
   type: 'text';
@@ -14,47 +15,46 @@ type TagElement = {
 
 type ParserElement = TextElement | TagElement;
 
-type TagToReactEl = Record<
-  string,
-  React.ComponentClass | React.FunctionComponent
->;
+type RendererType = (p: {
+  tag?: string;
+  children?: React.ReactNode;
+  key?: string | number;
+}) => React.ReactNode;
+
+const defaultRenderer = ({ tag, children, key }) =>
+  tags.has(tag) ? createElement(tag, { key }, children) : children;
 
 const ElementRenderer: React.FunctionComponent<{
   struct: ParserElement[];
-  map?: TagToReactEl;
-}> = props => (
+  path?: string;
+  renderer?: RendererType;
+}> = ({ struct, renderer = defaultRenderer, path }) => (
   <>
-    {props.struct.map((el, i) => {
+    {struct.map((el, i) => {
       if (el.type === 'text') return el.value;
-      if (props.map && el.tagType in props.map) {
-        const El = props.map[el.tagType];
+      const currentKey = `${path ?? ''}/${i}`;
 
-        return (
-          <El key={i}>
-            <ElementRenderer struct={el.value} map={props.map} />
-          </El>
-        );
-      }
-
-      return createElement(
-        el.tagType,
-        { key: i },
-        <ElementRenderer struct={el.value} map={props.map} />
-      );
+      return renderer({
+        key: currentKey,
+        tag: el.tagType,
+        children: (
+          <ElementRenderer key={`${currentKey}/${i}`} struct={el.value} />
+        )
+      });
     })}
   </>
 );
 
 const ReactTinyMarkup = (props: {
   children: React.ReactNode;
-  map?: TagToReactEl;
+  renderer?: RendererType;
 }) => {
   try {
     if (typeof props.children === 'string') {
       const parsedStruct = parse(props.children);
       return (
         <>
-          <ElementRenderer struct={parsedStruct} map={props.map} />
+          <ElementRenderer struct={parsedStruct} renderer={props.renderer} />
         </>
       );
     }
@@ -64,4 +64,4 @@ const ReactTinyMarkup = (props: {
 };
 
 export default ReactTinyMarkup;
-export { ElementRenderer };
+export { ElementRenderer, defaultRenderer };

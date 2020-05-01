@@ -114,28 +114,4 @@ const parse = text => {
   return structBuilder(tokens);
 };
 
-// type TagToReactEl = Record<string, any>;
-
-// const ElementRenderer: React.SFC<{
-//   struct: Element[];
-//   map: TagToReactEl;
-// }> = props =>
-//   props.struct.map(
-//     el => (el.type === 'text' ? createElement('span', {}, [el.value]) : null) // createElement('div', {})
-//   );
-
-// const ReactTinyMarkup = (props: {
-//   children: React.ReactNode;
-//   map: TagToReactEl;
-// }) => {
-//   if (typeof props.children === 'string') {
-//     const parsedStruct = parse(text);
-//     return parsedStruct.map(el => {});
-//   }
-
-//   return props.children;
-// };
-
-// export default ReactTinyMarkup;
-
 export { parse };

@@ -12,14 +12,16 @@ test('ElementRenderer', () => {
           { type: 'text', value: 'bc' },
           { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
         ]}
-        map={{ a: ({ children }) => <strong>{children}</strong> }}
+        renderer={({ children, tag, key }) =>
+          tag === 'a' ? <strong key={key}>{children}</strong> : null
+        }
       />
     )
   ).toEqual('abc<strong>a</strong>bc<strong>de</strong>');
 });
 
 test('ReactTinyMarkup basic examples', () => {
-  const str = 'abc<strong>a</strong>bc<ooo>de</ooo>';
+  const str = 'abc<strong>a</strong>bcde';
   expect(
     ReactDOMServer.renderToStaticMarkup(
       <ReactTinyMarkup>{str}</ReactTinyMarkup>
@@ -28,11 +30,15 @@ test('ReactTinyMarkup basic examples', () => {
 
   expect(
     ReactDOMServer.renderToStaticMarkup(
-      <ReactTinyMarkup map={{ strong: ({ children }) => <i>{children}</i> }}>
+      <ReactTinyMarkup
+        renderer={({ children, tag, key }) =>
+          tag === 'strong' ? <i key={key}>{children}</i> : null
+        }
+      >
         {str}
       </ReactTinyMarkup>
     )
-  ).toEqual('abc<i>a</i>bc<ooo>de</ooo>');
+  ).toEqual('abc<i>a</i>bcde');
 });
 
 test('ReactTinyMarkup unicode', () => {
@@ -45,7 +51,11 @@ test('ReactTinyMarkup unicode', () => {
 
   expect(
     ReactDOMServer.renderToStaticMarkup(
-      <ReactTinyMarkup map={{ a: ({ children }) => <i>{children}</i> }}>
+      <ReactTinyMarkup
+        renderer={({ children, tag, key }) =>
+          tag === 'a' ? <i key={key}>{children}</i> : null
+        }
+      >
         {str}
       </ReactTinyMarkup>
     )
