@@ -3,8 +3,7 @@
   "version": "0.0.4",
   "description": "",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "browser": "dist/index.bundle.js",
+  "module": "dist/index.mjs",
   "scripts": {
     "prepublish": "npm test && npm run build",
     "build": "rollup -c",
