@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "target": "es5",
