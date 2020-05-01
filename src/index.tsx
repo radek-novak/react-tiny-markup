@@ -1,4 +1,4 @@
-import React, { createElement, cloneElement } from 'react';
+import React, { createElement } from 'react';
 import { parse } from './parser';
 
 type TextElement = {
