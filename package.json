@@ -1,12 +1,12 @@
 {
   "name": "react-tiny-markup",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "browser": "dist/index.bundle.js",
   "scripts": {
-    "postinstall": "npm run build",
+    "prepublish": "npm run test && npm run build",
     "build": "rollup -c",
     "test": "jest"
   },
