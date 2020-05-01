@@ -1,9 +1,9 @@
 {
   "name": "react-tiny-markup",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.es.js",
   "scripts": {
     "prepublish": "npm test && npm run build",
     "build": "rollup -c",
