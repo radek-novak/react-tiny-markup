@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { createElement } from 'react';
 import ReactDOMServer from 'react-dom/server';
-import ReactTinyMarkup, { ElementRenderer } from '../index';
+import ReactTinyMarkup, { ElementRenderer, defaultRenderer } from '../index';
 
 test('ElementRenderer', () => {
   expect(
@@ -78,4 +78,41 @@ test('ReactTinyMarkup return string on invalid input', () => {
       <ReactTinyMarkup>{str}</ReactTinyMarkup>
     )
   ).toEqual('abc&lt;a&gt;&lt;b&gt;&lt;/c&gt;');
+});
+
+test('ReactTinyMarkup custom renderers', () => {
+  const str = '<ooo>inner</ooo><remove>invi<b>s</b>ible</remove><b>left in</b>';
+
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup
+        renderer={p => {
+          switch (p.tag) {
+            case 'ooo':
+              return createElement('c', { key: p.key }, p.children);
+            case 'remove':
+              return null;
+            default:
+              return createElement(p.tag, { key: p.key }, p.children);
+          }
+        }}
+      >
+        {str}
+      </ReactTinyMarkup>
+    )
+  ).toEqual('<c>inner</c><b>left in</b>');
+
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup
+        renderer={p =>
+          p.tag === 'b'
+            ? createElement('bbb', { key: p.key }, p.children)
+            : defaultRenderer(p)
+        }
+      >
+        {str}
+      </ReactTinyMarkup>
+    )
+  ).toEqual('innerinvi<bbb>s</bbb>ible<bbb>left in</bbb>');
 });

@@ -18,10 +18,10 @@ type ParserElement = TextElement | TagElement;
 type RendererType = (p: {
   tag?: string;
   children?: React.ReactNode;
-  key?: string | number;
+  key: string | number;
 }) => React.ReactNode;
 
-const defaultRenderer = ({ tag, children, key }) =>
+const defaultRenderer: RendererType = ({ tag, children, key }) =>
   tags.has(tag) ? createElement(tag, { key }, children) : children;
 
 const ElementRenderer: React.FunctionComponent<{
@@ -38,7 +38,11 @@ const ElementRenderer: React.FunctionComponent<{
         key: currentKey,
         tag: el.tagType,
         children: (
-          <ElementRenderer key={`${currentKey}/${i}`} struct={el.value} />
+          <ElementRenderer
+            key={`${currentKey}/${i}`}
+            struct={el.value}
+            renderer={renderer}
+          />
         )
       });
     })}
