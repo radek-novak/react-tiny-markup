@@ -12,7 +12,11 @@ It only renders react component without using `dangerouslySetInnerHTML`, therefo
 
 ```JSX
 // replace or remove tags
-const str = '<ooo>inner</ooo><remove>invi<b>s</b>ible</remove><b>left in</b>';
+const str = `
+  <ooo>inner</ooo>
+  <remove>invi<b>s</b>ible</remove>
+  <b>left in</b>
+`;
 <ReactTinyMarkup
   renderer={p => {
     switch (p.tag) {
@@ -27,7 +31,6 @@ const str = '<ooo>inner</ooo><remove>invi<b>s</b>ible</remove><b>left in</b>';
 >
   {str}
 </ReactTinyMarkup>
-
 // <c>inner</c><b>left in</b>
 ```
 
