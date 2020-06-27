@@ -41,6 +41,31 @@ test('ReactTinyMarkup basic examples', () => {
   ).toEqual('abc<i>a</i>bcde');
 });
 
+test('ReactTinyMarkup multiple tags', () => {
+  const str = 'abc<strong>a</strong>b<i>c</i>d<b>e</b>';
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup>{str}</ReactTinyMarkup>
+    )
+  ).toEqual(str);
+
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup
+        renderer={p =>
+          p.tag === 'strong' ? (
+            <i key={p.key}>{p.children}</i>
+          ) : (
+            defaultRenderer(p)
+          )
+        }
+      >
+        {str}
+      </ReactTinyMarkup>
+    )
+  ).toEqual('abc<i>a</i>b<i>c</i>d<b>e</b>');
+});
+
 test('ReactTinyMarkup unicode', () => {
   const str = 'ěšč<a>./\\</a>🐞<a>🏢☠️</a>';
   expect(
