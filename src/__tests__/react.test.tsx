@@ -108,6 +108,15 @@ test('ReactTinyMarkup some broken tags', () => {
     )
   ).toEqual('abc<a><b>&gt;&lt;&gt;&gt;/&lt;/</b>beh&lt;ind</a>');
 });
+test('ReactTinyMarkup spaces', () => {
+  const str =
+    '<b>this should not be actually bold</b> - <i>this should be slanted</i> - <sup> super script</sup> - <sub> subscript </sub>  - <sub><i>italic subscript</i></sub>';
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup>{str}</ReactTinyMarkup>
+    )
+  ).toEqual(str);
+});
 
 test('ReactTinyMarkup return string on invalid input', () => {
   const str = 'abc<a><b></c>';
