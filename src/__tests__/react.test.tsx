@@ -87,6 +87,19 @@ test('ReactTinyMarkup unicode', () => {
   ).toEqual('ěšč<i>./\\</i>🐞<i>🏢☠️</i>');
 });
 
+test('ReactTinyMarkup removing tags', () => {
+  const str = 'abc<strong>a</strong>b<i>c</i>d<b>e</b>';
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup
+        renderer={p => (p.tag === 'strong' ? p.children : defaultRenderer(p))}
+      >
+        {str}
+      </ReactTinyMarkup>
+    )
+  ).toEqual('abcab<i>c</i>d<b>e</b>');
+});
+
 test('ReactTinyMarkup some broken tags', () => {
   const str = 'abc<a><b>><>>/</</b>beh<ind</a>';
   expect(
