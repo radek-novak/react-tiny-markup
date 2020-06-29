@@ -1,9 +1,16 @@
 {
   "name": "react-tiny-markup",
   "version": "0.0.9",
-  "description": "",
+  "description": "Parse strings with tags into react components",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
+  "keywords": [
+    "html",
+    "react",
+    "markup",
+    "tags",
+    "parser"
+  ],
   "scripts": {
     "prepublish": "npm test && npm run build",
     "build": "rollup -c",
