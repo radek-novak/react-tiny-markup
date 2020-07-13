@@ -7,7 +7,7 @@ import {
   str,
   coroutine,
   letters
-} from 'arcsecond';
+} from './lib/arcsecond';
 
 // types
 enum TokenType {
