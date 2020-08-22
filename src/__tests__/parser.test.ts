@@ -9,6 +9,12 @@ const basicTestCasesMap = {
     { type: 'text', value: 'bc' },
     { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
   ],
+  'abc<br />bc<a>de</a>': [
+    { type: 'text', value: 'abc' },
+    { type: 'tag', tagType: 'br', value: null },
+    { type: 'text', value: 'bc' },
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
+  ],
 
   'abc<a><b>tagtext</b></a>': [
     { type: 'text', value: 'abc' },
@@ -95,6 +101,45 @@ const brokenTagsTestCasesMap = {
 };
 
 const entries = obj => Object.keys(obj).map(tc => [tc, obj[tc]]);
+
+test('self-closing', () => {
+  expect(parse('<br />')).toEqual([
+    { type: 'tag', tagType: 'br', value: null }
+  ]);
+
+  expect(parse('<br /><br/>')).toEqual([
+    { type: 'tag', tagType: 'br', value: null },
+    { type: 'tag', tagType: 'br', value: null }
+  ]);
+
+  expect(parse('<div><br /> <br/></div>')).toEqual([
+    {
+      type: 'tag',
+      tagType: 'div',
+      value: [
+        { type: 'tag', tagType: 'br', value: null },
+        { type: 'text', value: ' ' },
+        { type: 'tag', tagType: 'br', value: null }
+      ]
+    }
+  ]);
+
+  expect(parse('<div><b><br /></b> <br/></div>')).toEqual([
+    {
+      type: 'tag',
+      tagType: 'div',
+      value: [
+        {
+          type: 'tag',
+          tagType: 'b',
+          value: [{ type: 'tag', tagType: 'br', value: null }]
+        },
+        { type: 'text', value: ' ' },
+        { type: 'tag', tagType: 'br', value: null }
+      ]
+    }
+  ]);
+});
 
 test('basic', () => {
   for (let [testInput, expectedOutput] of entries(basicTestCasesMap)) {

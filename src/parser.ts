@@ -1,4 +1,5 @@
 import {
+  possibly,
   anythingExcept,
   many,
   choice,
@@ -6,11 +7,13 @@ import {
   between,
   str,
   coroutine,
+  sequenceOf,
   letters
 } from './lib/arcsecond';
 
 // types
 enum TokenType {
+  selfClosingTag = 'self-closing-tag',
   openTag = 'open-tag',
   closeTag = 'close-tag',
   text = 'text'
@@ -47,15 +50,21 @@ const rAngle = char('>');
 const openTag = between(lAngle)(rAngle)(letters).map(
   tokenTag(TokenType.openTag)
 );
+
 const closeTag = between(str('</'))(rAngle)(letters).map(
   tokenTag(TokenType.closeTag)
 );
-const text = many(anythingExcept(choice([openTag, closeTag]))).map(
-  tokenTag(TokenType.text, val => val.join(''))
-);
+
+const selfClosingTag = between(lAngle)(str('/>'))(
+  sequenceOf([letters, possibly(char(' '))])
+).map(tokenTag(TokenType.selfClosingTag));
+
+const text = many(
+  anythingExcept(choice([openTag, closeTag, selfClosingTag]))
+).map(tokenTag(TokenType.text, val => val.join('')));
 
 // order matters
-const token = choice([openTag, closeTag, text]);
+const token = choice([selfClosingTag, openTag, closeTag, text]);
 
 const tokenize = coroutine(function* () {
   const result = [];
@@ -79,6 +88,16 @@ const structBuilder = (tokens: Token[], openTags = []) => {
     token.ignore = true;
 
     switch (token.type) {
+      case TokenType.selfClosingTag: {
+        result.push({
+          type: 'tag',
+          // [ 'br', null ] tagtype and possible space or null
+          tagType: token.value[0],
+          value: null
+        });
+
+        break;
+      }
       case TokenType.text: {
         const { ignore, ...textObj } = token;
         result.push(textObj as any);

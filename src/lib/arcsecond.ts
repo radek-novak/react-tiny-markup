@@ -735,14 +735,14 @@ export const anythingExcept = function anythingExcept(parser) {
 // };
 
 // //           possibly :: Parser e a s -> Parser e (a | Null) s
-// export const possibly = function possibly(parser) {
-//   return new Parser(function possibly$state(state) {
-//     if (state.isError) return state;
+export const possibly = function possibly(parser) {
+  return new Parser(function possibly$state(state) {
+    if (state.isError) return state;
 
-//     const nextState = parser.p(state);
-//     return nextState.isError ? updateResult(state, null) : nextState;
-//   });
-// };
+    const nextState = parser.p(state);
+    return nextState.isError ? updateResult(state, null) : nextState;
+  });
+};
 
 // //           skip :: Parser e a s -> Parser e a s
 // export const skip = function skip(parser) {
