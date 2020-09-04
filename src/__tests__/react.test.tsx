@@ -1,3 +1,9 @@
+/*
+ * This test relies on ReactDOMServer.renderToStaticMarkup escaping parts of
+ * HTML elements provided as strings (which would be insecure). So we know that
+ * any non-escaped HTML in the output was successfully parsed as HTML tag.
+ */
+
 import React, { createElement } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import ReactTinyMarkup, { ElementRenderer, defaultRenderer } from '../index';
