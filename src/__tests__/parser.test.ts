@@ -1,107 +1,5 @@
 import { parse } from '../parser';
 
-const basicTestCasesMap = {
-  abc: [{ type: 'text', value: 'abc' }],
-
-  'abc<a>a</a>bc<a>de</a>': [
-    { type: 'text', value: 'abc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }] },
-    { type: 'text', value: 'bc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
-  ],
-  'abc<br />bc<a>de</a>': [
-    { type: 'text', value: 'abc' },
-    { type: 'tag', tagType: 'br', value: null },
-    { type: 'text', value: 'bc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
-  ],
-
-  'abc<a><b>tagtext</b></a>': [
-    { type: 'text', value: 'abc' },
-    {
-      type: 'tag',
-      tagType: 'a',
-      value: [
-        {
-          type: 'tag',
-          tagType: 'b',
-          value: [{ type: 'text', value: 'tagtext' }]
-        }
-      ]
-    }
-  ],
-
-  'abc<a><b>tagtext</b>behind</a>': [
-    { type: 'text', value: 'abc' },
-    {
-      type: 'tag',
-      tagType: 'a',
-      value: [
-        {
-          type: 'tag',
-          tagType: 'b',
-          value: [{ type: 'text', value: 'tagtext' }]
-        },
-        { type: 'text', value: 'behind' }
-      ]
-    }
-  ]
-};
-const unicodeCasesMap = {
-  'ěšč<a>./\\</a>🐞<a>🏢☠️</a>': [
-    { type: 'text', value: 'ěšč' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: './\\' }] },
-    { type: 'text', value: '🐞' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: '🏢☠️' }] }
-  ]
-};
-
-const brokenTagsTestCasesMap = {
-  'ab<': [{ type: 'text', value: 'ab<' }],
-
-  '<a>text</no</nope... now</a>': [
-    {
-      type: 'tag',
-      tagType: 'a',
-      value: [{ type: 'text', value: 'text</no</nope... now' }]
-    }
-  ],
-
-  'abc<a><>><<b>tagtext</b></a>': [
-    { type: 'text', value: 'abc' },
-    {
-      type: 'tag',
-      tagType: 'a',
-      value: [
-        { type: 'text', value: '<>><' },
-        {
-          type: 'tag',
-          tagType: 'b',
-          value: [{ type: 'text', value: 'tagtext' }]
-        }
-      ]
-    }
-  ],
-
-  'abc<a><b>><>>/</</b>beh<ind</a>': [
-    { type: 'text', value: 'abc' },
-    {
-      type: 'tag',
-      tagType: 'a',
-      value: [
-        {
-          type: 'tag',
-          tagType: 'b',
-          value: [{ type: 'text', value: '><>>/</' }]
-        },
-        { type: 'text', value: 'beh<ind' }
-      ]
-    }
-  ]
-};
-
-const entries = obj => Object.keys(obj).map(tc => [tc, obj[tc]]);
-
 test('self-closing', () => {
   expect(parse('<br />')).toEqual([
     { type: 'tag', tagType: 'br', value: null }
@@ -142,19 +40,102 @@ test('self-closing', () => {
 });
 
 test('basic', () => {
-  for (let [testInput, expectedOutput] of entries(basicTestCasesMap)) {
-    expect(parse(testInput)).toEqual(expectedOutput);
-  }
+  expect(parse('abc')).toEqual([{ type: 'text', value: 'abc' }]);
+
+  expect(parse('abc<a>a</a>bc<a>de</a>')).toEqual([
+    { type: 'text', value: 'abc' },
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }] },
+    { type: 'text', value: 'bc' },
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
+  ]);
+  expect(parse('abc<br />bc<a>de</a>')).toEqual([
+    { type: 'text', value: 'abc' },
+    { type: 'tag', tagType: 'br', value: null },
+    { type: 'text', value: 'bc' },
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
+  ]);
+
+  expect(parse('abc<a><b>tagtext</b></a>')).toEqual([
+    { type: 'text', value: 'abc' },
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [
+        {
+          type: 'tag',
+          tagType: 'b',
+          value: [{ type: 'text', value: 'tagtext' }]
+        }
+      ]
+    }
+  ]);
+
+  expect(parse('abc<a><b>tagtext</b>behind</a>')).toEqual([
+    { type: 'text', value: 'abc' },
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [
+        {
+          type: 'tag',
+          tagType: 'b',
+          value: [{ type: 'text', value: 'tagtext' }]
+        },
+        { type: 'text', value: 'behind' }
+      ]
+    }
+  ]);
 });
 
 test('unicode', () => {
-  for (let [testInput, expectedOutput] of entries(unicodeCasesMap)) {
-    expect(parse(testInput)).toEqual(expectedOutput);
-  }
+  expect(parse('ěšč<a>./\\</a>🐞<a>🏢☠️</a>')).toEqual([
+    { type: 'text', value: 'ěšč' },
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: './\\' }] },
+    { type: 'text', value: '🐞' },
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: '🏢☠️' }] }
+  ]);
 });
 
 test('broken tags', () => {
-  for (let [testInput, expectedOutput] of entries(brokenTagsTestCasesMap)) {
-    expect(parse(testInput)).toEqual(expectedOutput);
-  }
+  expect(parse('ab<')).toEqual([{ type: 'text', value: 'ab<' }]);
+
+  expect(parse('<a>text</no</nope... now</a>')).toEqual([
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [{ type: 'text', value: 'text</no</nope... now' }]
+    }
+  ]);
+
+  expect(parse('abc<a><>><<b>tagtext</b></a>')).toEqual([
+    { type: 'text', value: 'abc' },
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [
+        { type: 'text', value: '<>><' },
+        {
+          type: 'tag',
+          tagType: 'b',
+          value: [{ type: 'text', value: 'tagtext' }]
+        }
+      ]
+    }
+  ]);
+
+  expect(parse('abc<a><b>><>>/</</b>beh<ind</a>')).toEqual([
+    { type: 'text', value: 'abc' },
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [
+        {
+          type: 'tag',
+          tagType: 'b',
+          value: [{ type: 'text', value: '><>>/</' }]
+        },
+        { type: 'text', value: 'beh<ind' }
+      ]
+    }
+  ]);
 });
