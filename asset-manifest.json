@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/react-tiny-markup/static/css/main.76677c61.chunk.css",
+    "main.js": "/react-tiny-markup/static/js/main.65949966.chunk.js",
+    "main.js.map": "/react-tiny-markup/static/js/main.65949966.chunk.js.map",
+    "runtime-main.js": "/react-tiny-markup/static/js/runtime-main.dcc52abd.js",
+    "runtime-main.js.map": "/react-tiny-markup/static/js/runtime-main.dcc52abd.js.map",
+    "static/js/2.a5f9ffa1.chunk.js": "/react-tiny-markup/static/js/2.a5f9ffa1.chunk.js",
+    "static/js/2.a5f9ffa1.chunk.js.map": "/react-tiny-markup/static/js/2.a5f9ffa1.chunk.js.map",
+    "index.html": "/react-tiny-markup/index.html",
+    "precache-manifest.dd5493fb255ec16531fa2a335456289a.js": "/react-tiny-markup/precache-manifest.dd5493fb255ec16531fa2a335456289a.js",
+    "service-worker.js": "/react-tiny-markup/service-worker.js",
+    "static/css/main.76677c61.chunk.css.map": "/react-tiny-markup/static/css/main.76677c61.chunk.css.map",
+    "static/js/2.a5f9ffa1.chunk.js.LICENSE.txt": "/react-tiny-markup/static/js/2.a5f9ffa1.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.dcc52abd.js",
+    "static/js/2.a5f9ffa1.chunk.js",
+    "static/css/main.76677c61.chunk.css",
+    "static/js/main.65949966.chunk.js"
+  ]
+}
