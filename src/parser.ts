@@ -25,21 +25,24 @@ type Token = {
   value: string;
 };
 
-type TextElement = {
+export type TextElement = {
   type: 'text';
   value: string;
 };
 
-type TagElement = {
+export type TagElement = {
   type: 'tag';
   tagType: string;
-  value: ParserElement[];
+  value: ParserElement[] | null;
 };
 
-type ParserElement = TextElement | TagElement;
+export type ParserElement = TextElement | TagElement;
 
 // tagger
-const tokenTag = (type: TokenType, customizer = id => id) => value => ({
+const tokenTag = (
+  type: TokenType,
+  customizer = (id: ParserElement[] | null) => id as any
+) => (value: ParserElement[] | null) => ({
   type,
   value: customizer(value)
 });
@@ -61,7 +64,7 @@ const selfClosingTag = between(lAngle)(str('/>'))(
 
 const text = many(
   anythingExcept(choice([openTag, closeTag, selfClosingTag]))
-).map(tokenTag(TokenType.text, val => val.join('')));
+).map(tokenTag(TokenType.text, val => (val ? val.join('') : '')));
 
 // order matters
 const token = choice([selfClosingTag, openTag, closeTag, text]);
@@ -78,7 +81,7 @@ const tokenize = coroutine(function* () {
   return result;
 });
 
-const structBuilder = (tokens: Token[], openTags = []) => {
+const structBuilder = (tokens: Token[], openTags = [] as string[]) => {
   const result = [] as ParserElement[];
 
   for (let i = 0; i < tokens.length; i++) {
@@ -127,7 +130,7 @@ const structBuilder = (tokens: Token[], openTags = []) => {
   return result;
 };
 
-const parse = text => {
+const parse = (text: string) => {
   const tokens = tokenize.run(text).result;
 
   return structBuilder(tokens);

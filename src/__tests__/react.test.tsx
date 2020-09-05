@@ -114,6 +114,15 @@ test('ReactTinyMarkup some broken tags', () => {
     )
   ).toEqual('abc<a><b>&gt;&lt;&gt;&gt;/&lt;/</b>beh&lt;ind</a>');
 });
+
+test('ReactTinyMarkup self-closing tag', () => {
+  const str = '<div><br /> <br/></div>';
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup>{str}</ReactTinyMarkup>
+    )
+  ).toEqual('<div><br/> <br/></div>');
+});
 test('ReactTinyMarkup spaces', () => {
   const str =
     '<b>this should not be actually bold</b> - <i>this should be slanted</i> - <sup> super script</sup> - <sub> subscript </sub>  - <sub><i>italic subscript</i></sub>';
@@ -146,7 +155,9 @@ test('ReactTinyMarkup custom renderers', () => {
             case 'remove':
               return null;
             default:
-              return createElement(p.tag, { key: p.key }, p.children);
+              return p.tag
+                ? createElement(p.tag, { key: p.key }, p.children)
+                : null;
           }
         }}
       >

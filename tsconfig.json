@@ -6,6 +6,7 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
+    "strict": true,
     "target": "es5",
     "downlevelIteration": true,
     "lib": ["esnext"]

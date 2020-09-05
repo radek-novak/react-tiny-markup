@@ -1,19 +1,6 @@
 import React, { createElement } from 'react';
-import { parse } from './parser';
+import { parse, TextElement, TagElement, ParserElement } from './parser';
 import { tags } from './util';
-
-type TextElement = {
-  type: 'text';
-  value: string;
-};
-
-type TagElement = {
-  type: 'tag';
-  tagType: string;
-  value: ParserElement[];
-};
-
-type ParserElement = TextElement | TagElement;
 
 type RendererType = (p: {
   tag?: string;
@@ -22,7 +9,7 @@ type RendererType = (p: {
 }) => React.ReactNode;
 
 const defaultRenderer: RendererType = ({ tag, children, key }) =>
-  tags.has(tag) ? createElement(tag, { key }, children) : children;
+  tag && tags.has(tag) ? createElement(tag, { key }, children) : children;
 
 const ElementRenderer: React.FunctionComponent<{
   struct: ParserElement[];
@@ -30,22 +17,24 @@ const ElementRenderer: React.FunctionComponent<{
   renderer?: RendererType;
 }> = ({ struct, renderer = defaultRenderer, path }) => (
   <>
-    {struct.map((el, i) => {
-      if (el.type === 'text') return el.value;
-      const currentKey = `${path ?? ''}/${i}`;
+    {struct
+      ? struct.map((el, i) => {
+          if (el.type === 'text') return el.value;
+          const currentKey = `${path ?? ''}/${i}`;
 
-      return renderer({
-        key: currentKey,
-        tag: el.tagType,
-        children: (
-          <ElementRenderer
-            key={`${currentKey}/${i}`}
-            struct={el.value}
-            renderer={renderer}
-          />
-        )
-      });
-    })}
+          return renderer({
+            key: currentKey,
+            tag: el.tagType,
+            children: el.value ? (
+              <ElementRenderer
+                key={`${currentKey}/${i}`}
+                struct={el.value}
+                renderer={renderer}
+              />
+            ) : null
+          });
+        })
+      : null}
   </>
 );
 
@@ -62,6 +51,8 @@ const ReactTinyMarkup = (props: {
         </>
       );
     }
+
+    return <>{props.children}</>;
   } catch {
     return <>{props.children}</>;
   }
