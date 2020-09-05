@@ -6,7 +6,11 @@ function App() {
   const [val, setVal] = React.useState('<b>bold</b><i>italic</i>');
   return (
     <div className="App">
-      <textarea onChange={e => setVal(e.target.value)} value={val} />
+      <textarea
+        // @ts-ignore
+        onChange={e => setVal(e.target.value)}
+        value={val}
+      />
       <ReactTinyMarkup>{val}</ReactTinyMarkup>
     </div>
   );
