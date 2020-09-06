@@ -4,7 +4,7 @@ import ReactTinyMarkup, { defaultRenderer } from 'react-tiny-markup';
 import parentPackage from './parentPackage.json';
 import './App.css';
 
-const first = `Default settings allow basic tags like
+const first = `Default settings allow the tags you expect, such as
 <b>bold</b>, <i>italic</i>, line <br /> break are supported.
 <ul>
   <li>as well as lists</li>
