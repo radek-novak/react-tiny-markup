@@ -85,6 +85,14 @@ test('basic', () => {
       ]
     }
   ]);
+
+  expect(parse('<h1>abc</h1>')).toEqual([
+    {
+      type: 'tag',
+      tagType: 'h1',
+      value: [{ type: 'text', value: 'abc' }]
+    }
+  ]);
 });
 
 test('unicode', () => {

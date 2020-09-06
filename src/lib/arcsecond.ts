@@ -13,7 +13,7 @@
 
 // Caching compiled regexs for better performance
 // const reDigit = /[0-9]/;
-// const reDigits = /^[0-9]+/;
+const reDigits = /^[0-9]+/;
 // const reLetter = /[a-zA-Z]/;
 const reLetters = /^[a-zA-Z]+/;
 // const reWhitespaces = /^\s+/;
@@ -34,7 +34,7 @@ const updateError = (state, error) => ({ ...state, isError: true, error });
 //    updateResult :: (ParserState e a s, b) -> ParserState e b s
 const updateResult = (state, result) => ({ ...state, result });
 
-// //    updateData :: (ParserState e a s, t) -> ParserState e b t
+//    updateData :: (ParserState e a s, t) -> ParserState e b t
 // const updateData = (state, data) => ({ ...state, data });
 
 //    updateResult :: (ParserState e a s, b, Integer) -> ParserState e b s
@@ -72,7 +72,7 @@ Parser.prototype.run = function Parser$run(targetString) {
   };
 };
 
-// //               fork :: Parser e a s ~> x -> (e -> ParserState e a s -> f) -> (a -> ParserState e a s -> b)
+//               fork :: Parser e a s ~> x -> (e -> ParserState e a s -> f) -> (a -> ParserState e a s -> b)
 // Parser.prototype.fork = function Parser$fork(targetString, errorFn, successFn) {
 //   const state = createParserState(targetString);
 //   const newState = this.p(state);
@@ -104,7 +104,7 @@ Parser.prototype['fantasy-land/chain'] = function Parser$chain(fn) {
   });
 };
 
-// //               ap :: Parser e a s ~> Parser e (a -> b) s -> Parser e b s
+//               ap :: Parser e a s ~> Parser e (a -> b) s -> Parser e b s
 // Parser.prototype['fantasy-land/ap'] = function Parser$ap(parserOfFunction) {
 //   const p = this.p;
 //   return new Parser(function Parser$ap$state(state) {
@@ -134,7 +134,7 @@ Parser.prototype.errorMap = function Parser$errorMap(fn) {
   });
 };
 
-// //               errorChain :: Parser e a s ~> ((e, Integer, s) -> Parser f a s) -> Parser f a s
+//               errorChain :: Parser e a s ~> ((e, Integer, s) -> Parser f a s) -> Parser f a s
 // Parser.prototype.errorChain = function Parser$errorChain(fn) {
 //   const p = this.p;
 //   return new Parser(function Parser$errorChain$state(state) {
@@ -148,7 +148,7 @@ Parser.prototype.errorMap = function Parser$errorMap(fn) {
 //   });
 // };
 
-// //               mapFromData :: Parser e a s ~> (StateData a s -> b) -> Parser e b s
+//               mapFromData :: Parser e a s ~> (StateData a s -> b) -> Parser e b s
 // Parser.prototype.mapFromData = function Parser$mapFromData(fn) {
 //   const p = this.p;
 //   return new Parser(function Parser$mapFromData$state(state) {
@@ -161,7 +161,7 @@ Parser.prototype.errorMap = function Parser$errorMap(fn) {
 //   });
 // };
 
-// //               chainFromData :: Parser e a s ~> (StateData a s -> Parser f b t) -> Parser f b t
+//               chainFromData :: Parser e a s ~> (StateData a s -> Parser f b t) -> Parser f b t
 // Parser.prototype.chainFromData = function Parser$chainFromData(fn) {
 //   const p = this.p;
 //   return new Parser(function Parser$chainFromData$state(state) {
@@ -171,7 +171,7 @@ Parser.prototype.errorMap = function Parser$errorMap(fn) {
 //   });
 // };
 
-// //               mapData :: Parser e a s ~> (s -> t) -> Parser e a t
+//               mapData :: Parser e a s ~> (s -> t) -> Parser e a t
 // Parser.prototype.mapData = function Parser$mapData(fn) {
 //   const p = this.p;
 //   return new Parser(function mapData$state(state) {
@@ -190,13 +190,13 @@ Parser.prototype.map = Parser.prototype['fantasy-land/map'];
 Parser.prototype.chain = Parser.prototype['fantasy-land/chain'];
 Parser.of = Parser['fantasy-land/of'];
 
-// //           getData :: Parser e a s
+//           getData :: Parser e a s
 // export const getData = new Parser(function getData$state(state) {
 //   if (state.isError) return state;
 //   return updateResult(state, state.data);
 // });
 
-// //           setData :: t -> Parser e a t
+//           setData :: t -> Parser e a t
 // export const setData = function setData(x) {
 //   return new Parser(function setData$state(state) {
 //     if (state.isError) return state;
@@ -204,7 +204,7 @@ Parser.of = Parser['fantasy-land/of'];
 //   });
 // };
 
-// //           mapData :: (s -> t) -> Parser e a t
+//           mapData :: (s -> t) -> Parser e a t
 // export const mapData = function mapData(fn) {
 //   return new Parser(function mapData$state(state) {
 //     if (state.isError) return state;
@@ -212,14 +212,14 @@ Parser.of = Parser['fantasy-land/of'];
 //   });
 // };
 
-// //           withData :: Parser e a x -> s -> Parser e a s
+//           withData :: Parser e a x -> s -> Parser e a s
 // export const withData = function withData(parser) {
 //   return function withData$stateData(stateData) {
 //     return setData(stateData).chain(() => parser);
 //   };
 // };
 
-// //           pipeParsers :: [Parser * * *] -> Parser * * *
+//           pipeParsers :: [Parser * * *] -> Parser * * *
 // export const pipeParsers = function pipeParsers(parsers) {
 //   return new Parser(function pipeParsers$state(state) {
 //     let nextState = state;
@@ -230,14 +230,14 @@ Parser.of = Parser['fantasy-land/of'];
 //   });
 // };
 
-// //           composeParsers :: [Parser * * *] -> Parser * * *
+//           composeParsers :: [Parser * * *] -> Parser * * *
 // export const composeParsers = function composeParsers(parsers) {
 //   return new Parser(function composeParsers$state(state) {
 //     return pipeParsers([...parsers].reverse()).p(state);
 //   });
 // };
 
-// //           tapParser :: (a => ()) -> Parser e a s
+//           tapParser :: (a => ()) -> Parser e a s
 // export const tapParser = function tapParser(fn) {
 //   return new Parser(function tapParser$state(state) {
 //     fn(state);
@@ -245,14 +245,14 @@ Parser.of = Parser['fantasy-land/of'];
 //   });
 // };
 
-// //           parse :: Parser e a s -> String -> Either e a
+//           parse :: Parser e a s -> String -> Either e a
 // export const parse = function parse(parser) {
 //   return function parse$targetString(targetString) {
 //     return parser.run(targetString);
 //   };
 // };
 
-// //           decide :: (a -> Parser e b s) -> Parser e b s
+//           decide :: (a -> Parser e b s) -> Parser e b s
 // export const decide = function decide(fn) {
 //   return new Parser(function decide$state(state) {
 //     if (state.isError) return state;
@@ -261,7 +261,7 @@ Parser.of = Parser['fantasy-land/of'];
 //   });
 // };
 
-// //           fail :: e -> Parser e a s
+//           fail :: e -> Parser e a s
 // export const fail = function fail(errorMessage) {
 //   return new Parser(function fail$state(state) {
 //     if (state.isError) return state;
@@ -269,10 +269,10 @@ Parser.of = Parser['fantasy-land/of'];
 //   });
 // };
 
-// //           succeedWith :: a -> Parser e a s
+//           succeedWith :: a -> Parser e a s
 // export const succeedWith = Parser.of;
 
-// //           either :: Parser e a s -> Parser e (Either e a) s
+//           either :: Parser e a s -> Parser e (Either e a) s
 // export const either = function either(parser) {
 //   return new Parser(function either$state(state) {
 //     if (state.isError) return state;
@@ -339,7 +339,7 @@ export const many = function many(parser) {
   });
 };
 
-// //           many1 :: Parser e s a -> Parser e s [a]
+//           many1 :: Parser e s a -> Parser e s [a]
 // export const many1 = function many1(parser) {
 //   return new Parser(function many1$state(state) {
 //     if (state.isError) return state;
@@ -354,7 +354,7 @@ export const many = function many(parser) {
 //   });
 // };
 
-// //           mapTo :: (a -> b) -> Parser e b s
+//           mapTo :: (a -> b) -> Parser e b s
 // export const mapTo = function mapTo(fn) {
 //   return new Parser(function mapTo$state(state) {
 //     if (state.isError) return state;
@@ -362,7 +362,7 @@ export const many = function many(parser) {
 //   });
 // };
 
-// //           errorMapTo :: (ParserState e a s -> f) -> Parser f a s
+//           errorMapTo :: (ParserState e a s -> f) -> Parser f a s
 // export const errorMapTo = function errorMapTo(fn) {
 //   return new Parser(function errorMapTo$state(state) {
 //     if (!state.isError) return state;
@@ -465,7 +465,7 @@ export const regex = function regex(re) {
   });
 };
 
-// //           digit :: Parser e String s
+//           digit :: Parser e String s
 // export const digit = new Parser(function digit$state(state) {
 //   if (state.isError) return state;
 
@@ -485,12 +485,12 @@ export const regex = function regex(re) {
 //   );
 // });
 
-// //           digits :: Parser e String s
+//           digits :: Parser e String s
 // export const digits = regex(reDigits).errorMap(
 //   (_, index) => `ParseError (position ${index}): Expecting digits`
 // );
 
-// //           letter :: Parser e Char s
+//           letter :: Parser e Char s
 // export const letter = new Parser(function letter$state(state) {
 //   if (state.isError) return state;
 
@@ -516,7 +516,7 @@ export const letters = regex(reLetters).errorMap(
   (_, index) => `ParseError (position ${index}): Expecting letters`
 );
 
-// //           anyOfString :: String -> Parser e Char s
+//           anyOfString :: String -> Parser e Char s
 // export const anyOfString = function anyOfString(s) {
 //   return new Parser(function anyOfString$state(state) {
 //     if (state.isError) return state;
@@ -538,7 +538,7 @@ export const letters = regex(reLetters).errorMap(
 //   });
 // };
 
-// //           namedSequenceOf :: [(String, Parser * * *)] -> Parser e (StrMap *) s
+//           namedSequenceOf :: [(String, Parser * * *)] -> Parser e (StrMap *) s
 // export const namedSequenceOf = function namedSequenceOf(pairedParsers) {
 //   return new Parser(function namedSequenceOf$state(state) {
 //     if (state.isError) return state;
@@ -584,7 +584,7 @@ export const sequenceOf = function sequenceOf(parsers) {
   });
 };
 
-// //           sepBy :: Parser e a s -> Parser e b s -> Parser e [b] s
+//           sepBy :: Parser e a s -> Parser e b s -> Parser e [b] s
 // export const sepBy = function sepBy(sepParser) {
 //   return function sepBy$valParser(valParser) {
 //     return new Parser(function sepBy$valParser$state(state) {
@@ -625,7 +625,7 @@ export const sequenceOf = function sequenceOf(parsers) {
 //   };
 // };
 
-// //           sepBy1 :: Parser e a s -> Parser e b s -> Parser e [b] s
+//           sepBy1 :: Parser e a s -> Parser e b s -> Parser e [b] s
 // export const sepBy1 = function sepBy1(sepParser) {
 //   return function sepBy1$valParser(valParser) {
 //     return new Parser(function sepBy1$valParser$state(state) {
@@ -673,7 +673,7 @@ export const between = function between(leftParser) {
   };
 };
 
-// //           everythingUntil :: Parser e a s -> Parser e String s
+//           everythingUntil :: Parser e a s -> Parser e String s
 // export const everythingUntil = function everythingUntil(parser) {
 //   return new Parser(state => {
 //     if (state.isError) return state;
@@ -723,7 +723,7 @@ export const anythingExcept = function anythingExcept(parser) {
   });
 };
 
-// //           lookAhead :: Parser e a s -> Parser e a s
+//           lookAhead :: Parser e a s -> Parser e a s
 // export const lookAhead = function lookAhead(parser) {
 //   return new Parser(function lookAhead$state(state) {
 //     if (state.isError) return state;
@@ -734,7 +734,7 @@ export const anythingExcept = function anythingExcept(parser) {
 //   });
 // };
 
-// //           possibly :: Parser e a s -> Parser e (a | Null) s
+//           possibly :: Parser e a s -> Parser e (a | Null) s
 export const possibly = function possibly(parser) {
   return new Parser(function possibly$state(state) {
     if (state.isError) return state;
@@ -744,7 +744,7 @@ export const possibly = function possibly(parser) {
   });
 };
 
-// //           skip :: Parser e a s -> Parser e a s
+//           skip :: Parser e a s -> Parser e a s
 // export const skip = function skip(parser) {
 //   return new Parser(function skip$state(state) {
 //     if (state.isError) return state;
@@ -755,7 +755,7 @@ export const possibly = function possibly(parser) {
 //   });
 // };
 
-// //           endOfInput :: Parser e Null s
+//           endOfInput :: Parser e Null s
 // export const endOfInput = new Parser(function endOfInput$state(state) {
 //   if (state.isError) return state;
 //   const { target, index } = state;
@@ -772,7 +772,7 @@ export const possibly = function possibly(parser) {
 //   return updateResult(state, null);
 // });
 
-// //           whitespace :: Parser e String s
+//           whitespace :: Parser e String s
 // export const whitespace = regex(reWhitespaces)
 //   // Keeping this error even though the implementation no longer uses many1. Will change it to something more appropriate in the next major release.
 //   .errorMap(
@@ -780,31 +780,31 @@ export const possibly = function possibly(parser) {
 //       `ParseError 'many1' (position ${index}): Expecting to match at least one value`
 //   );
 
-// //           optionalWhitespace :: Parser e String s
+//           optionalWhitespace :: Parser e String s
 // export const optionalWhitespace = possibly(whitespace).map(x => x || '');
 
-// //           recursiveParser :: (() => Parser e a s) -> Parser e a s
+//           recursiveParser :: (() => Parser e a s) -> Parser e a s
 // export const recursiveParser = function recursiveParser(parserThunk) {
 //   return new Parser(function recursiveParser$state(state) {
 //     return parserThunk().p(state);
 //   });
 // };
 
-// //           takeRight :: Parser e a s -> Parser f b t -> Parser f b t
+//           takeRight :: Parser e a s -> Parser f b t -> Parser f b t
 // export const takeRight = function takeRight(leftParser) {
 //   return function takeRight$rightParser(rightParser) {
 //     return leftParser.chain(() => rightParser);
 //   };
 // };
 
-// //           takeLeft :: Parser e a s -> Parser f b t -> Parser e a s
+//           takeLeft :: Parser e a s -> Parser f b t -> Parser e a s
 // export const takeLeft = function takeLeft(leftParser) {
 //   return function takeLeft$rightParser(rightParser) {
 //     return leftParser.chain(x => rightParser.map(() => x));
 //   };
 // };
 
-// //           toPromise :: ParserResult e a s -> Promise (e, Integer, s) a
+//           toPromise :: ParserResult e a s -> Promise (e, Integer, s) a
 // export const toPromise = function toPromise(result) {
 //   return result.isError
 //     ? Promise.reject({
@@ -815,7 +815,7 @@ export const possibly = function possibly(parser) {
 //     : Promise.resolve(result.result);
 // };
 
-// //           toValue :: ParserResult e a s -> a
+//           toValue :: ParserResult e a s -> a
 // export const toValue = function toValue(result) {
 //   if (result.isError) {
 //     const e = new Error(result.error);

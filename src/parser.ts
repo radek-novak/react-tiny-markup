@@ -8,7 +8,8 @@ import {
   str,
   coroutine,
   sequenceOf,
-  letters
+  letters,
+  regex
 } from './lib/arcsecond';
 
 // types
@@ -50,16 +51,18 @@ const tokenTag = (
 // parser
 const lAngle = char('<');
 const rAngle = char('>');
-const openTag = between(lAngle)(rAngle)(letters).map(
+const lettersOrDigits = regex(/^[a-zA-Z0-9]+/);
+
+const openTag = between(lAngle)(rAngle)(lettersOrDigits).map(
   tokenTag(TokenType.openTag)
 );
 
-const closeTag = between(str('</'))(rAngle)(letters).map(
+const closeTag = between(str('</'))(rAngle)(lettersOrDigits).map(
   tokenTag(TokenType.closeTag)
 );
 
 const selfClosingTag = between(lAngle)(str('/>'))(
-  sequenceOf([letters, possibly(char(' '))])
+  sequenceOf([lettersOrDigits, possibly(char(' '))])
 ).map(tokenTag(TokenType.selfClosingTag));
 
 const text = many(
