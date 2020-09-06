@@ -1,10 +1,10 @@
-# react-tiny-markup  ![ ](https://badgen.net/bundlephobia/minzip/react-tiny-markup)
+# react-tiny-markup ![ ](https://badgen.net/bundlephobia/minzip/react-tiny-markup)
 
 This component aims to parse a simple markup language nontechnical users may input - typically `<i>` and `<b>` tags. It will never be a complete HTML5 parser (tag nesting validation, autoclosing tags - none of that). I wanted a smaller (~3kB vs ~60+kB) alternative to [sanitize-html](https://www.npmjs.com/package/sanitize-html).
 
 ### Security:
 
-It only renders react component without using `dangerouslySetInnerHTML`, therefore it is secure (unless you use `dangerouslySetInnerHTML` yourself in the custom renderer)
+It doesn't use `dangerouslySetInnerHTML`.
 
 ### Examples:
 
