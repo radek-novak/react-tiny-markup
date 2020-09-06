@@ -8822,7 +8822,7 @@ react-scripts@3.4.3:
   optionalDependencies:
     fsevents "2.1.2"
 
-"react-tiny-markup@file:..":
+"react-tiny-markup@file:./..":
   version "0.1.2"
 
 react@^16.13.1:

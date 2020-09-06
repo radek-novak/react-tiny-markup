@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import ReactTinyMarkup, { defaultRenderer } from 'react-tiny-markup';
 import parentPackage from './parentPackage.json';
