@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactTinyMarkup, { defaultRenderer } from 'react-tiny-markup';
+import parentPackage from './parentPackage.json';
 import './App.css';
 
 const first = `Default settings allow basic tags like
@@ -24,16 +25,21 @@ function App() {
 
   return (
     <div className="App">
-      <h1>react-tiny-markup</h1>
-      <p>
+      <h1>
+        react-tiny-markup <sup>v{parentPackage.version}</sup>
+      </h1>
+
+      <section>
+        <h2>Install</h2>
         <pre>
           <code>npm install react-tiny-markup</code>
         </pre>
         <pre>
           <code>yarn add react-tiny-markup</code>
         </pre>
-      </p>
+      </section>
 
+      <h2>Try it out</h2>
       <div className="grid">
         <textarea
           className="textarea"

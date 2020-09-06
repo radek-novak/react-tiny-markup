@@ -8822,10 +8822,8 @@ react-scripts@3.4.3:
   optionalDependencies:
     fsevents "2.1.2"
 
-react-tiny-markup@^0.1.2:
+"react-tiny-markup@file:..":
   version "0.1.2"
-  resolved "https://registry.yarnpkg.com/react-tiny-markup/-/react-tiny-markup-0.1.2.tgz#11ec9a018e348ffecbceb3598646e73df99b13dc"
-  integrity sha512-Jw7uD+45yvRoQhy7OWUtFdt5eBKhQ0fka2O4VnrOl0qcKPVFMMqOCV+jSfngku27cAFdZ7huVHdVS90N3L9BWg==
 
 react@^16.13.1:
   version "16.13.1"
