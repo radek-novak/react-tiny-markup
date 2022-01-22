@@ -65,7 +65,7 @@ const structBuilder = (tokens: LexemeTag[], openTags = [] as string[]) => {
 const parse = (text: string) => {
   const scanner = new Scanner(text);
 
-  return structBuilder(scanner.scanTokens());
+  return structBuilder(scanner.scanTokensWithMerge());
 };
 
 export { parse };

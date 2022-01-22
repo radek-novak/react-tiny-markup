@@ -64,15 +64,15 @@ class Scanner {
   }
 
   private scanString() {
-    while (!reNonchar.test(this.peek()) && !this.isAtEnd()) {
+    while (this.peek() !== '<' && !this.isAtEnd()) {
       if (this.peek() === '\n') this.line++;
       this.advance();
     }
 
-    if (this.isAtEnd()) {
-      // Lox.error(this.line, "Unterminated string.");
-      return;
-    }
+    // if (this.isAtEnd()) {
+    //   The original errored here with "Unterminated string."
+    //   return;
+    // }
 
     const value = this.input.substring(this.start, this.current);
     this.addStringToken(value);
