@@ -1,4 +1,4 @@
-import { parse } from '../new-parser';
+import { parse } from '../parser';
 
 test('self-closing', () => {
   expect(parse('<br />')).toEqual([
