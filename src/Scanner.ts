@@ -49,12 +49,13 @@ class Scanner {
   ) {
     if (
       type === LexemeType.HTML_OPENING_TAG ||
-      LexemeType.HTML_SELFCLOSING_TAG
+      type === LexemeType.HTML_SELFCLOSING_TAG
     ) {
       this.tokens.push({ type, name, rawContent, restContent });
     } else if (type === LexemeType.HTML_CLOSING_TAG) {
       this.tokens.push({ type, name, rawContent });
     } else {
+      // Impossible branch
       throw new Error('unknown tag type');
     }
   }
@@ -120,12 +121,7 @@ class Scanner {
     const cleanName = name.replace(reNonchar, '').toLowerCase();
 
     if (rawContent[1] === '/') {
-      this.addTagToken(
-        LexemeType.HTML_CLOSING_TAG,
-        cleanName,
-        rawContent,
-        restContent
-      );
+      this.addTagToken(LexemeType.HTML_CLOSING_TAG, cleanName, rawContent);
     } else if (rawContent[rawContent.length - 2] === '/') {
       this.addTagToken(
         LexemeType.HTML_SELFCLOSING_TAG,
@@ -150,6 +146,7 @@ class Scanner {
     this.current++;
     return true;
   }
+
   private matchRegex(expected: RegExp) {
     if (this.isAtEnd()) return false;
     if (!expected.test(this.input.charAt(this.current))) return false;
