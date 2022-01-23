@@ -27,7 +27,6 @@ const structBuilder = (tokens: LexemeTag[], openTags = [] as string[]) => {
       case LexemeType.HTML_SELFCLOSING_TAG: {
         result.push({
           type: 'tag',
-          // [ 'br', null ] tagtype and possible space or null
           tagType: token.name,
           value: null
         });
@@ -56,6 +55,7 @@ const structBuilder = (tokens: LexemeTag[], openTags = [] as string[]) => {
         throw new Error(`Expected ${lastOpen} but got ${token.name} instead.`);
       }
       default:
+        // Impossible branch
         throw new Error(`Unknown type ${token}`);
     }
   }
