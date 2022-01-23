@@ -47,6 +47,16 @@ test('ReactTinyMarkup basic examples', () => {
   ).toEqual('abc<i>a</i>bcde');
 });
 
+test('ReactTinyMarkup ignore non-string input', () => {
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup>
+        <div>a</div>
+      </ReactTinyMarkup>
+    )
+  ).toEqual('<div>a</div>');
+});
+
 test('ReactTinyMarkup multiple tags', () => {
   const str = 'abc<strong>a</strong>b<i>c</i>d<b>e</b>';
   expect(

@@ -8,7 +8,11 @@
     "jsx": "react",
     "strict": true,
     "target": "es5",
+    "moduleResolution": "node",
     "downlevelIteration": true,
-    "lib": ["esnext"]
-  }
+    "lib": ["esnext", "ES6"]
+  },
+  "include": [
+    "src/**/*"
+  ],
 }

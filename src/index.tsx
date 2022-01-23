@@ -1,5 +1,5 @@
 import React, { createElement } from 'react';
-import { parse, TextElement, TagElement, ParserElement } from './parser';
+import { parse, ParserElement } from './parser';
 import { tags } from './util';
 
 type RendererType = (p: {
