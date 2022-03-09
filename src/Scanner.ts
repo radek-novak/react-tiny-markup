@@ -60,6 +60,14 @@ class Scanner {
     }
   }
 
+  private addAttributeToken(
+    type: LexemeType.HTML_ATTRIBUTE,
+    name: string,
+    value: string
+  ) {
+    this.tokens.push({ type, name, value });
+  }
+
   private addStringToken(value: string) {
     this.tokens.push({ type: LexemeType.STRING, value });
   }
@@ -119,6 +127,7 @@ class Scanner {
 
   private addTag(rawContent: string, name: string, restContent = '') {
     const cleanName = name.replace(reNonchar, '').toLowerCase();
+    const attributes = this.matchAttributes(rawContent);
 
     if (rawContent[1] === '/') {
       this.addTagToken(LexemeType.HTML_CLOSING_TAG, cleanName, rawContent);
@@ -137,6 +146,18 @@ class Scanner {
         restContent
       );
     }
+
+    let attribute = attributes.next();
+    while(!attribute.done) {
+      const [_, name, value] = attribute.value;
+      this.addAttributeToken(LexemeType.HTML_ATTRIBUTE, name, value);
+      attribute = attributes.next();
+    }
+  }
+
+  private matchAttributes(rawContent: string) {
+    const attributes = rawContent.matchAll(/(\w+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/g);
+    return attributes;
   }
 
   private match(expected: string) {
@@ -187,6 +208,9 @@ class Scanner {
         current.type === LexemeType.STRING
       ) {
         lastMerged.value += current.value;
+      } else if((lastMerged.type === LexemeType.HTML_OPENING_TAG || lastMerged.type === LexemeType.HTML_SELFCLOSING_TAG) && current.type === LexemeType.HTML_ATTRIBUTE) {
+        !lastMerged.attributes && (lastMerged.attributes = []);
+        lastMerged.attributes.push(current);
       } else {
         mergedTokens.push(current);
       }

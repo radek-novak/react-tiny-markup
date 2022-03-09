@@ -5,7 +5,7 @@ const test1 = `
   <a>bc<defg<d><br /></d></a>
 
   <STRONG>
-    <img src=abcdef />
+    <img src="abcdef" />
   </STRONG>
 
   x<5; n>3
@@ -32,7 +32,8 @@ const test1_expected = [
   { type: 3, value: '  ' },
   { type: 0, name: 'strong', rawContent: '<STRONG>', restContent: '' },
   { type: 3, value: '    ' },
-  { type: 2, name: 'img', rawContent: '<img src=abcdef />', restContent: '' },
+  { type: 2, name: 'img', rawContent: '<img src="abcdef" />', restContent: '' },
+  { type: 4, name: 'src', value: 'abcdef' },
   { type: 3, value: '  ' },
   { type: 1, name: 'strong', rawContent: '</STRONG>' },
   { type: 3, value: '  x' },
@@ -55,7 +56,7 @@ const test1_merged_expected = [
   { type: 3, value: '  ' },
   { type: 0, name: 'strong', rawContent: '<STRONG>', restContent: '' },
   { type: 3, value: '    ' },
-  { type: 2, name: 'img', rawContent: '<img src=abcdef />', restContent: '' },
+  { type: 2, name: 'img', rawContent: '<img src="abcdef" />', restContent: '', attributes: [{ type: 4, name: 'src', value: 'abcdef' }] },
   { type: 3, value: '  ' },
   { type: 1, name: 'strong', rawContent: '</STRONG>' },
   { type: 3, value: '  x<5; n>3\n\n\n    a random string' },

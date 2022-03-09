@@ -22,6 +22,8 @@ const ElementRenderer: React.FunctionComponent<{
           if (el.type === 'text') return el.value;
           const currentKey = `${path ?? ''}/${i}`;
 
+          const attributes = el.attributes?.reduce((attrs, { attributeName, value }) => ({...attrs, [attributeName]: value}), {}) ?? {};
+
           return renderer({
             key: currentKey,
             tag: el.tagType,
@@ -30,6 +32,7 @@ const ElementRenderer: React.FunctionComponent<{
                 key={`${currentKey}/${i}`}
                 struct={el.value}
                 renderer={renderer}
+                {...attributes}
               />
             ) : null
           });
