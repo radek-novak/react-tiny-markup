@@ -118,14 +118,17 @@ class Scanner {
   }
 
   private addTag(rawContent: string, name: string, restContent = '') {
-    const cleanName = name.replace(reNonchar, '').toLowerCase();
+    const cleanTagName = name.replace(reNonchar, '');
+    const cleanName = cleanTagName.toLowerCase();
     const attributesRaw = this.matchAttributes(rawContent);
     const attributes: AttributeNode[] = [];
 
     let attribute = attributesRaw.next();
     while(!attribute.done) {
-      const [_, name, value] = attribute.value;
-      attributes.push({ type: LexemeType.HTML_TAG_ATTRIBUTE, name, value });
+      const [tagName, _attributeName, value, emptyAttribute, booleanAttribute] = attribute.value;
+      const attributeName = _attributeName || emptyAttribute || booleanAttribute;
+      const attributeValue = value ? value : booleanAttribute ? true : '';
+      (tagName !== cleanTagName) && attributes.push({ type: LexemeType.HTML_TAG_ATTRIBUTE, name: attributeName, value: attributeValue });
       attribute = attributesRaw.next();
     }
 
@@ -149,7 +152,7 @@ class Scanner {
   }
 
   private matchAttributes(rawContent: string) {
-    const attributes = rawContent.matchAll(/(\w+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/g);
+    const attributes = rawContent.matchAll(/(\w+)=["']((?:.(?!["']\s+(?:\S+)=|\s*\/[>"']))+.)["']|(\w+)=["']["']|(\w+)/g);
     return attributes;
   }
 

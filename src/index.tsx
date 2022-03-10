@@ -1,15 +1,18 @@
 import React, { createElement } from 'react';
-import { parse, ParserElement } from './parser';
-import { tags } from './util';
+import { AttributElement, parse, ParserElement } from './parser';
+import { tags, validAttributes, reactAttributesMap } from './util';
 
 type RendererType = (p: {
   tag?: string;
   children?: React.ReactNode;
   key: string | number;
+  attributes?: {
+    [x: string]: React.ReactNode
+  }
 }) => React.ReactNode;
 
-const defaultRenderer: RendererType = ({ tag, children, key }) =>
-  tag && tags.has(tag) ? createElement(tag, { key }, children) : children;
+const defaultRenderer: RendererType = ({ tag, children, key, attributes }) =>
+  tag && tags.has(tag) ? createElement(tag, { key, ...attributes }, children) : children;
 
 const ElementRenderer: React.FunctionComponent<{
   struct: ParserElement[];
@@ -21,18 +24,24 @@ const ElementRenderer: React.FunctionComponent<{
       ? struct.map((el, i) => {
           if (el.type === 'text') return el.value;
           const currentKey = `${path ?? ''}/${i}`;
+          const attributes = el.attributes?.reduce((attrs, { attributeName, value }) => {
+            if(!validAttributes.has(attributeName)) return attrs;
 
-          const attributes = el.attributes?.reduce((attrs, { attributeName, value }) => ({...attrs, [attributeName]: value}), {}) ?? {};
+            const reactAttributeName = reactAttributesMap.get(attributeName);
+            if(reactAttributeName) return {...attrs, [reactAttributeName]: value};
+
+            return {...attrs, [attributeName]: value};
+          }, {}) ?? {};
 
           return renderer({
             key: currentKey,
             tag: el.tagType,
+            attributes,
             children: el.value ? (
               <ElementRenderer
                 key={`${currentKey}/${i}`}
                 struct={el.value}
                 renderer={renderer}
-                {...attributes}
               />
             ) : null
           });

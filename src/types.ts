@@ -9,7 +9,7 @@ export type AttributeNode = {
   type: LexemeType.HTML_TAG_ATTRIBUTE;
   ignore?: boolean;
   name: string;
-  value: string;
+  value: string | boolean;
 };
 
 export type LexemeTag =

@@ -9,7 +9,7 @@ export type TextElement = {
 export type AttributElement = {
   type: 'attribute';
   attributeName: string;
-  value: string;
+  value: string | boolean;
 };
 
 export type TagElement = {
