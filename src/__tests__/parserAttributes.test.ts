@@ -11,6 +11,7 @@ test('attributes', () => {
           type: 'tag',
           tagType: 'b',
           value: [{ type: 'text', value: 'tagtext' }],
+          attributes: []
         }
       ],
       attributes: [

@@ -1,4 +1,4 @@
-import { LexemeTag, LexemeType } from './types';
+import { AttributeNode, LexemeTag, LexemeType } from './types';
 
 const reNonchar = /[<>/]/;
 // const allowedTagIdentifier = /[a-z0-9]/i;
@@ -45,27 +45,19 @@ class Scanner {
       | LexemeType.HTML_SELFCLOSING_TAG,
     name: string,
     rawContent: string,
-    restContent = ''
+    attributes: AttributeNode[] = []
   ) {
     if (
       type === LexemeType.HTML_OPENING_TAG ||
       type === LexemeType.HTML_SELFCLOSING_TAG
     ) {
-      this.tokens.push({ type, name, rawContent, restContent });
+      this.tokens.push({ type, name, rawContent, attributes });
     } else if (type === LexemeType.HTML_CLOSING_TAG) {
       this.tokens.push({ type, name, rawContent });
     } else {
       // Impossible branch
       throw new Error('unknown tag type');
     }
-  }
-
-  private addAttributeToken(
-    type: LexemeType.HTML_ATTRIBUTE,
-    name: string,
-    value: string
-  ) {
-    this.tokens.push({ type, name, value });
   }
 
   private addStringToken(value: string) {
@@ -127,7 +119,15 @@ class Scanner {
 
   private addTag(rawContent: string, name: string, restContent = '') {
     const cleanName = name.replace(reNonchar, '').toLowerCase();
-    const attributes = this.matchAttributes(rawContent);
+    const attributesRaw = this.matchAttributes(rawContent);
+    const attributes: AttributeNode[] = [];
+
+    let attribute = attributesRaw.next();
+    while(!attribute.done) {
+      const [_, name, value] = attribute.value;
+      attributes.push({ type: LexemeType.HTML_TAG_ATTRIBUTE, name, value });
+      attribute = attributesRaw.next();
+    }
 
     if (rawContent[1] === '/') {
       this.addTagToken(LexemeType.HTML_CLOSING_TAG, cleanName, rawContent);
@@ -136,22 +136,15 @@ class Scanner {
         LexemeType.HTML_SELFCLOSING_TAG,
         cleanName,
         rawContent,
-        restContent
+        attributes,
       );
     } else {
       this.addTagToken(
         LexemeType.HTML_OPENING_TAG,
         cleanName,
         rawContent,
-        restContent
+        attributes
       );
-    }
-
-    let attribute = attributes.next();
-    while(!attribute.done) {
-      const [_, name, value] = attribute.value;
-      this.addAttributeToken(LexemeType.HTML_ATTRIBUTE, name, value);
-      attribute = attributes.next();
     }
   }
 
@@ -208,9 +201,6 @@ class Scanner {
         current.type === LexemeType.STRING
       ) {
         lastMerged.value += current.value;
-      } else if((lastMerged.type === LexemeType.HTML_OPENING_TAG || lastMerged.type === LexemeType.HTML_SELFCLOSING_TAG) && current.type === LexemeType.HTML_ATTRIBUTE) {
-        !lastMerged.attributes && (lastMerged.attributes = []);
-        lastMerged.attributes.push(current);
       } else {
         mergedTokens.push(current);
       }

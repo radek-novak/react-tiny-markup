@@ -3,10 +3,10 @@ export enum LexemeType {
   HTML_CLOSING_TAG,
   HTML_SELFCLOSING_TAG,
   STRING,
-  HTML_ATTRIBUTE
+  HTML_TAG_ATTRIBUTE
 }
-export type AttributeLexemeTag = {
-  type: LexemeType.HTML_ATTRIBUTE;
+export type AttributeNode = {
+  type: LexemeType.HTML_TAG_ATTRIBUTE;
   ignore?: boolean;
   name: string;
   value: string;
@@ -23,13 +23,11 @@ export type LexemeTag =
       ignore?: boolean;
       name: string;
       rawContent: string;
-      restContent: string;
-      attributes?: AttributeLexemeTag[];
+      attributes: AttributeNode[];
     }
   | {
       type: LexemeType.HTML_CLOSING_TAG;
       ignore?: boolean;
       name: string;
       rawContent: string;
-    }
-  | AttributeLexemeTag;
+    };
