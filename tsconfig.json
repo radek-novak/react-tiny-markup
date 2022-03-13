@@ -7,7 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "strict": true,
-    "target": "es5",
+    "target": "es2015",
     "moduleResolution": "node",
     "downlevelIteration": true,
     "lib": ["esnext", "ES6"]

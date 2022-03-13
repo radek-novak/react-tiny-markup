@@ -11,34 +11,32 @@ const allowedTagIdentifierInitial = /[a-z]/i;
  * https://craftinginterpreters.com/scanning.html
  */
 class Scanner {
-  start: number;
-  line: number;
-  current: number;
-  tokens: LexemeTag[];
-  input: string;
+  #start: number;
+  #current: number;
+  #tokens: LexemeTag[];
+  #input: string;
 
   constructor(input: string) {
-    this.tokens = [] as LexemeTag[];
-    this.input = input;
-    this.start = 0;
-    this.line = 1;
-    this.current = 0;
+    this.#tokens = [] as LexemeTag[];
+    this.#input = input;
+    this.#start = 0;
+    this.#current = 0;
   }
 
-  private isAtEnd() {
-    return this.current >= this.input.length;
+  #isAtEnd() {
+    return this.#current >= this.#input.length;
   }
 
-  private peek() {
-    if (this.isAtEnd()) return '\0';
-    return this.input.charAt(this.current);
+  #peek() {
+    if (this.#isAtEnd()) return '\0';
+    return this.#input.charAt(this.#current);
   }
 
-  private advance() {
-    return this.input.charAt(this.current++);
+  #advance() {
+    return this.#input.charAt(this.#current++);
   }
 
-  private addTagToken(
+  #addTagToken(
     type:
       | LexemeType.HTML_OPENING_TAG
       | LexemeType.HTML_CLOSING_TAG
@@ -51,23 +49,22 @@ class Scanner {
       type === LexemeType.HTML_OPENING_TAG ||
       type === LexemeType.HTML_SELFCLOSING_TAG
     ) {
-      this.tokens.push({ type, name, rawContent, restContent });
+      this.#tokens.push({ type, name, rawContent, restContent });
     } else if (type === LexemeType.HTML_CLOSING_TAG) {
-      this.tokens.push({ type, name, rawContent });
+      this.#tokens.push({ type, name, rawContent });
     } else {
       // Impossible branch
       throw new Error('unknown tag type');
     }
   }
 
-  private addStringToken(value: string) {
-    this.tokens.push({ type: LexemeType.STRING, value });
+  #addStringToken(value: string) {
+    this.#tokens.push({ type: LexemeType.STRING, value });
   }
 
-  private scanString() {
-    while (this.peek() !== '<' && !this.isAtEnd()) {
-      if (this.peek() === '\n') this.line++;
-      this.advance();
+  #scanString() {
+    while (this.#peek() !== '<' && !this.#isAtEnd()) {
+      this.#advance();
     }
 
     // if (this.isAtEnd()) {
@@ -75,62 +72,61 @@ class Scanner {
     //   return;
     // }
 
-    const value = this.input.substring(this.start, this.current);
-    this.addStringToken(value);
+    const value = this.#input.substring(this.#start, this.#current);
+    this.#addStringToken(value);
   }
 
   /**
    * Attempts to scan a tag, but will gracefully scan a string on fail
    */
-  private scanTag() {
+  #scanTag() {
     // match closing tag if possible
-    this.match('/');
+    this.#match('/');
 
-    const nameStart = this.current;
+    const nameStart = this.#current;
     let nameEnd: null | number = null;
 
     // ensure first letter is valid
-    if (!this.matchRegex(allowedTagIdentifierInitial)) {
-      this.addStringToken(this.input.substring(this.start, this.current));
+    if (!this.#matchRegex(allowedTagIdentifierInitial)) {
+      this.#addStringToken(this.#input.substring(this.#start, this.#current));
 
       return;
     }
 
-    while (this.peek() !== '>' && this.peek() !== '<' && !this.isAtEnd()) {
-      if (this.peek() === '\n') this.line++;
-      else if ((this.peek() === '/' || this.peek() === ' ') && nameEnd === null)
-        nameEnd = this.current;
+    while (this.#peek() !== '>' && this.#peek() !== '<' && !this.#isAtEnd()) {
+      if ((this.#peek() === '/' || this.#peek() === ' ') && nameEnd === null)
+        nameEnd = this.#current;
 
-      this.advance();
+      this.#advance();
     }
 
-    if (this.peek() === '<') {
+    if (this.#peek() === '<') {
       // do not advance to start parsing this `<` as the next tag
-      this.addStringToken(this.input.substring(this.start, this.current));
+      this.#addStringToken(this.#input.substring(this.#start, this.#current));
     } else {
-      this.advance();
+      this.#advance();
 
-      this.addTag(
-        this.input.substring(this.start, this.current),
-        this.input.substring(nameStart, nameEnd ?? this.current)
+      this.#addTag(
+        this.#input.substring(this.#start, this.#current),
+        this.#input.substring(nameStart, nameEnd ?? this.#current)
       );
     }
   }
 
-  private addTag(rawContent: string, name: string, restContent = '') {
+  #addTag(rawContent: string, name: string, restContent = '') {
     const cleanName = name.replace(reNonchar, '').toLowerCase();
 
     if (rawContent[1] === '/') {
-      this.addTagToken(LexemeType.HTML_CLOSING_TAG, cleanName, rawContent);
+      this.#addTagToken(LexemeType.HTML_CLOSING_TAG, cleanName, rawContent);
     } else if (rawContent[rawContent.length - 2] === '/') {
-      this.addTagToken(
+      this.#addTagToken(
         LexemeType.HTML_SELFCLOSING_TAG,
         cleanName,
         rawContent,
         restContent
       );
     } else {
-      this.addTagToken(
+      this.#addTagToken(
         LexemeType.HTML_OPENING_TAG,
         cleanName,
         rawContent,
@@ -139,24 +135,24 @@ class Scanner {
     }
   }
 
-  private match(expected: string) {
-    if (this.isAtEnd()) return false;
-    if (this.input.charAt(this.current) !== expected) return false;
+  #match(expected: string) {
+    if (this.#isAtEnd()) return false;
+    if (this.#input.charAt(this.#current) !== expected) return false;
 
-    this.current++;
+    this.#current++;
     return true;
   }
 
-  private matchRegex(expected: RegExp) {
-    if (this.isAtEnd()) return false;
-    if (!expected.test(this.input.charAt(this.current))) return false;
+  #matchRegex(expected: RegExp) {
+    if (this.#isAtEnd()) return false;
+    if (!expected.test(this.#input.charAt(this.#current))) return false;
 
-    this.current++;
+    this.#current++;
     return true;
   }
 
-  private scanToken() {
-    const c = this.advance();
+  #scanToken() {
+    const c = this.#advance();
 
     switch (c) {
       // uncomment to ignore whitespace
@@ -164,14 +160,11 @@ class Scanner {
       // case "\r":
       // case "\t":
       //   break;
-      case '\n':
-        this.line++;
-        break;
       case '<':
-        this.scanTag();
+        this.#scanTag();
         break;
       default:
-        this.scanString();
+        this.#scanString();
     }
   }
 
@@ -196,13 +189,13 @@ class Scanner {
   }
 
   scanTokens() {
-    while (!this.isAtEnd()) {
-      this.start = this.current;
+    while (!this.#isAtEnd()) {
+      this.#start = this.#current;
 
-      this.scanToken();
+      this.#scanToken();
     }
 
-    return this.tokens;
+    return this.#tokens;
   }
 }
 

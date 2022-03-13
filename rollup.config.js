@@ -27,6 +27,6 @@ export default {
     typescript({
       typescript: require('typescript')
     }),
-    terser() // minifies generated bundles
+    terser()
   ]
 };
