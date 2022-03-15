@@ -132,18 +132,4 @@ const tags = new Set([
   // 'tspan'
 ]);
 
-const validAttributes = new Set<string>([
-  // 'href',
-  // 'class',
-  // 'autofocus',
-  // 'disabled',
-  // 'target',
-  // 'src'
-]);
-
-const reactAttributesMap = new Map<string, string>([
-  // ['class', 'className'],
-  // ['autofocus', 'autoFocus'],
-]);
-
-export { tags, validAttributes, reactAttributesMap };
+export { tags };

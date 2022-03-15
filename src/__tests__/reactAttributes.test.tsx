@@ -20,9 +20,27 @@ test('ElementRenderer', () => {
         }}
         struct={[
           { type: 'text', value: 'abc' },
-          { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }], attributes: [{ type: 'attribute', attributeName: 'href', value: 'https://abc.de/ab/cd?p1=a&p2=b4#top' }] },
+          {
+            type: 'tag',
+            tagType: 'a',
+            value: [{ type: 'text', value: 'a' }],
+            attributes: [
+              {
+                type: 'attribute',
+                attributeName: 'href',
+                value: 'https://abc.de/ab/cd?p1=a&p2=b4#top'
+              }
+            ]
+          },
           { type: 'text', value: 'bc' },
-          { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }], attributes: [{ type: 'attribute', attributeName: 'class', value: 'test-name'}] },
+          {
+            type: 'tag',
+            tagType: 'a',
+            value: [{ type: 'text', value: 'de' }],
+            attributes: [
+              { type: 'attribute', attributeName: 'class', value: 'test-name' }
+            ]
+          },
           {
             type: 'tag',
             tagType: 'br',
@@ -42,11 +60,13 @@ test('ElementRenderer', () => {
                 type: 'attribute',
                 attributeName: 'disabled',
                 value: true
-              },
+              }
             ]
-          },
+          }
         ]}
       />
     )
-  ).toEqual('abc<a href="https://abc.de/ab/cd?p1=a&amp;p2=b4#top">a</a>bc<a class="test-name">de</a><br autofocus="" class="" disabled=""/>');
+  ).toEqual(
+    'abc<a href="https://abc.de/ab/cd?p1=a&amp;p2=b4#top">a</a>bc<a class="test-name">de</a><br autofocus="" class="" disabled=""/>'
+  );
 });

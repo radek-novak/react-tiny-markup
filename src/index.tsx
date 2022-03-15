@@ -1,61 +1,49 @@
 import React, { createElement } from 'react';
-import { parse, ParserElement } from './parser';
-import { tags, validAttributes, reactAttributesMap } from './util';
-
-const formatAllowedAttributes = (allowedAttributes: Record<string, string>) => {
-  const allowedAttributeNames = Object.keys(allowedAttributes ?? {});
-  const parseAttributes = allowedAttributeNames.length > 0;
-  return {
-    allowedAttributeNames,
-    parseAttributes
-  }
-};
-
-const setAllowedAttributes = (allowedAttributes: Record<string, string>, allowedAttributeNames: string[]) => {
-  allowedAttributeNames.forEach((name: string) => {
-    validAttributes.add(name);
-    const reactMappingName = (allowedAttributes ?? {})[name];
-    reactMappingName && reactAttributesMap.set(name, reactMappingName);
-  });
-};
+import { parse, ParserElement, AttributeElement } from './parser';
+import { tags } from './util';
 
 type RendererType = (p: {
   tag?: string;
   children?: React.ReactNode;
   key: string | number;
   attributes?: {
-    [x: string]: React.ReactNode
-  }
+    [x: string]: string | boolean;
+  };
 }) => React.ReactNode;
 
+const translateAttrs = (
+  attrMap: Record<string, string>,
+  attrs: AttributeElement[]
+) =>
+  attrs.reduce((attrs, { attributeName, value }) => {
+    if (!attrMap.hasOwnProperty(attributeName)) return attrs;
+    const reactAttributeName = attrMap[attributeName];
+    if (reactAttributeName) return { ...attrs, [reactAttributeName]: value };
+
+    return { ...attrs, [attributeName]: value };
+  }, {} as Record<string, string | boolean>) ?? {};
+
 const defaultRenderer: RendererType = ({ tag, children, key, attributes }) =>
-  tag && tags.has(tag) ? createElement(tag, { key, ...attributes }, children) : children;
+  tag && tags.has(tag)
+    ? createElement(tag, { key, ...attributes }, children)
+    : children;
 
 const ElementRenderer: React.FunctionComponent<{
   struct: ParserElement[];
   path?: string;
-  allowedAttributes?:  Record<string, string>;
+  allowedAttributes: Record<string, string>;
   renderer?: RendererType;
-}> = ({ struct, renderer = defaultRenderer, path, allowedAttributes }) => {
-  const { parseAttributes, allowedAttributeNames } = formatAllowedAttributes(allowedAttributes ?? {});
-  if(parseAttributes) {
-    setAllowedAttributes(allowedAttributes ?? {}, allowedAttributeNames);
-  }
-
+}> = ({ struct, renderer = defaultRenderer, path = '', allowedAttributes }) => {
   return (
     <>
       {struct
         ? struct.map((el, i) => {
             if (el.type === 'text') return el.value;
-            const currentKey = `${path ?? ''}/${i}`;
-            const attributes = el.attributes?.reduce((attrs, { attributeName, value }) => {
-              if(!validAttributes.has(attributeName)) return attrs;
-
-              const reactAttributeName = reactAttributesMap.get(attributeName);
-              if(reactAttributeName) return {...attrs, [reactAttributeName]: value};
-
-              return {...attrs, [attributeName]: value};
-            }, {}) ?? {};
+            const currentKey = `${path}/${i}`;
+            const attributes = translateAttrs(
+              allowedAttributes,
+              el.attributes ?? []
+            );
 
             return renderer({
               key: currentKey,
@@ -66,6 +54,7 @@ const ElementRenderer: React.FunctionComponent<{
                   key={`${currentKey}/${i}`}
                   struct={el.value}
                   renderer={renderer}
+                  allowedAttributes={allowedAttributes}
                 />
               ) : null
             });
@@ -73,24 +62,26 @@ const ElementRenderer: React.FunctionComponent<{
         : null}
     </>
   );
-}
+};
 
 const ReactTinyMarkup = (props: {
   children: React.ReactNode;
-  allowedAttributes?:  Record<string, string>;
+  allowedAttributes?: Record<string, string>;
   renderer?: RendererType;
 }) => {
-  const { parseAttributes, allowedAttributeNames } = formatAllowedAttributes(props.allowedAttributes ?? {});
-  if(parseAttributes) {
-    setAllowedAttributes(props.allowedAttributes ?? {}, allowedAttributeNames);
-  }
+  const _allowedAttributes = props.allowedAttributes ?? {};
+  const parseAttributes = Object.keys(_allowedAttributes).length > 0;
 
   try {
     if (typeof props.children === 'string') {
       const parsedStruct = parse(props.children, parseAttributes);
       return (
         <>
-          <ElementRenderer struct={parsedStruct} renderer={props.renderer} />
+          <ElementRenderer
+            struct={parsedStruct}
+            renderer={props.renderer}
+            allowedAttributes={_allowedAttributes}
+          />
         </>
       );
     }
@@ -102,4 +93,4 @@ const ReactTinyMarkup = (props: {
 };
 
 export default ReactTinyMarkup;
-export { ElementRenderer, defaultRenderer, formatAllowedAttributes, setAllowedAttributes };
+export { ElementRenderer, defaultRenderer };

@@ -18,6 +18,7 @@ test('ElementRenderer', () => {
           { type: 'text', value: 'bc' },
           { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
         ]}
+        allowedAttributes={{}}
         renderer={({ children, tag, key }) =>
           tag === 'a' ? <strong key={key}>{children}</strong> : null
         }
@@ -189,4 +190,55 @@ test('ReactTinyMarkup custom renderers', () => {
       </ReactTinyMarkup>
     )
   ).toEqual('innerinvi<bbb>s</bbb>ible<bbb>left in</bbb>');
+});
+
+test('ReactTinyMarkup attributes', () => {
+  const source =
+    '<b class="abc" href="nope.com">show class but not disabled</b>';
+  const expected = '<b class="abc">show class but not disabled</b>';
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup allowedAttributes={{ class: 'className' }}>
+        {source}
+      </ReactTinyMarkup>
+    )
+  ).toEqual(expected);
+});
+
+test('ReactTinyMarkup attributes with custom renderer', () => {
+  const source = `<b class="abc" href="nope.com">show class but not disabled</b><img alt="none" src="yep.com"/><img  src="nope.com"/>`;
+  const expected = `<bbb class="abc" title="b">show class but not disabled</bbb><img alt="NONE" src="yep.com"/><img src="nope.com" alt=""/>`;
+
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup
+        allowedAttributes={{ class: 'className', src: 'src', alt: 'alt' }}
+        renderer={p => {
+          if (p.tag === 'b') {
+            return createElement(
+              'bbb',
+              { key: p.key, ...p.attributes, title: p.tag },
+              p.children
+            );
+          }
+
+          if (p.tag === 'img') {
+            const props = { key: p.key, ...p.attributes } as any;
+
+            if (!props.alt) {
+              props.alt = '';
+            }
+            if (props.alt === 'none') {
+              props.alt = 'NONE';
+            }
+            return createElement('img', props);
+          }
+
+          return defaultRenderer(p);
+        }}
+      >
+        {source}
+      </ReactTinyMarkup>
+    )
+  ).toEqual(expected);
 });

@@ -6,7 +6,7 @@ export type TextElement = {
   value: string;
 };
 
-export type AttributElement = {
+export type AttributeElement = {
   type: 'attribute';
   attributeName: string;
   value: string | boolean;
@@ -16,7 +16,7 @@ export type TagElement = {
   type: 'tag';
   tagType: string;
   value: ParserElement[] | null;
-  attributes?: AttributElement[];
+  attributes?: AttributeElement[];
 };
 
 export type ParserElement = TextElement | TagElement;
@@ -40,7 +40,7 @@ const structBuilder = (tokens: LexemeTag[], openTags = [] as string[]) => {
             type: 'attribute',
             attributeName: attrToken.name,
             value: attrToken.value
-          })),
+          }))
         });
 
         break;
@@ -58,7 +58,7 @@ const structBuilder = (tokens: LexemeTag[], openTags = [] as string[]) => {
             type: 'attribute',
             attributeName: attrToken.name,
             value: attrToken.value
-          })),
+          }))
         });
 
         break;
