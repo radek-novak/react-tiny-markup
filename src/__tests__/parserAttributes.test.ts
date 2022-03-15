@@ -1,7 +1,7 @@
 import { parse } from '../parser';
 
 test('attributes', () => {
-  expect(parse('abc<a href="/url/path" target="_blank" class="hello motos"><b>tagtext</b></a>')).toEqual([
+  expect(parse('abc<a href="/url/path" target="_blank" class="hello motos"><b>tagtext</b></a>', true)).toEqual([
     { type: 'text', value: 'abc' },
     {
       type: 'tag',
@@ -36,7 +36,7 @@ test('attributes', () => {
 });
 
 test('full urls', () => {
-  expect(parse('abc<a href="https://abc.de/ab/cd?p1=a&p2=b4#top">url</a>test')).toEqual([
+  expect(parse('abc<a href="https://abc.de/ab/cd?p1=a&p2=b4#top">url</a>test', true)).toEqual([
     { type: 'text', value: 'abc' },
     {
       type: 'tag',
@@ -55,7 +55,7 @@ test('full urls', () => {
 });
 
 test('self-closing tags and no content/boolean attributes', () => {
-  expect(parse('abc<input autofocus class="" disabled/>test')).toEqual([
+  expect(parse('abc<input autofocus class="" disabled/>test', true)).toEqual([
     { type: 'text', value: 'abc' },
     {
       type: 'tag',

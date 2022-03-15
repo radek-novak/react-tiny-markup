@@ -16,13 +16,15 @@ class Scanner {
   current: number;
   tokens: LexemeTag[];
   input: string;
+  parseAttributes: boolean;
 
-  constructor(input: string) {
+  constructor(input: string, parseAttributes: boolean = false) {
     this.tokens = [] as LexemeTag[];
     this.input = input;
     this.start = 0;
     this.line = 1;
     this.current = 0;
+    this.parseAttributes = parseAttributes;
   }
 
   private isAtEnd() {
@@ -117,19 +119,21 @@ class Scanner {
     }
   }
 
-  private addTag(rawContent: string, name: string, restContent = '') {
+  private addTag(rawContent: string, name: string) {
     const cleanTagName = name.replace(reNonchar, '');
     const cleanName = cleanTagName.toLowerCase();
-    const attributesRaw = this.matchAttributes(rawContent);
     const attributes: AttributeNode[] = [];
 
-    let attribute = attributesRaw.next();
-    while(!attribute.done) {
-      const [tagName, _attributeName, value, emptyAttribute, booleanAttribute] = attribute.value;
-      const attributeName = _attributeName || emptyAttribute || booleanAttribute;
-      const attributeValue = value ? value : booleanAttribute ? true : '';
-      (tagName !== cleanTagName) && attributes.push({ type: LexemeType.HTML_TAG_ATTRIBUTE, name: attributeName, value: attributeValue });
-      attribute = attributesRaw.next();
+    if (this.parseAttributes) {
+      const attributesRaw = this.matchAttributes(rawContent);
+      let attribute = attributesRaw.next();
+      while(!attribute.done) {
+        const [tagName, _attributeName, value, emptyAttribute, booleanAttribute] = attribute.value;
+        const attributeName = _attributeName || emptyAttribute || booleanAttribute;
+        const attributeValue = value ? value : booleanAttribute ? true : '';
+        (tagName !== cleanTagName) && attributes.push({ type: LexemeType.HTML_TAG_ATTRIBUTE, name: attributeName, value: attributeValue });
+        attribute = attributesRaw.next();
+      }
     }
 
     if (rawContent[1] === '/') {

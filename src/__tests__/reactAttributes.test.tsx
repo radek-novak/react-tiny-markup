@@ -12,6 +12,12 @@ test('ElementRenderer', () => {
   expect(
     ReactDOMServer.renderToStaticMarkup(
       <ElementRenderer
+        allowedAttributes={{
+          autofocus: 'autoFocus',
+          class: 'className',
+          disabled: '',
+          href: ''
+        }}
         struct={[
           { type: 'text', value: 'abc' },
           { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }], attributes: [{ type: 'attribute', attributeName: 'href', value: 'https://abc.de/ab/cd?p1=a&p2=b4#top' }] },

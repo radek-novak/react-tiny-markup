@@ -94,7 +94,7 @@ test('broken tags', () => {
 });
 
 test('large test', () => {
-  const scanner = new Scanner(test1);
+  const scanner = new Scanner(test1, true);
 
   const result = scanner.scanTokens();
 
@@ -102,7 +102,7 @@ test('large test', () => {
 });
 
 test('large test with merge', () => {
-  const scanner = new Scanner(test1);
+  const scanner = new Scanner(test1, true);
 
   const result = scanner.scanTokensWithMerge();
 
