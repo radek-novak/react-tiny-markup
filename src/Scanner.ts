@@ -1,4 +1,4 @@
-import { LexemeTag, LexemeType } from './types';
+import { AttributeNode, LexemeTag, LexemeType } from './types';
 
 const reNonchar = /[<>/]/;
 // const allowedTagIdentifier = /[a-z0-9]/i;
@@ -16,13 +16,15 @@ class Scanner {
   current: number;
   tokens: LexemeTag[];
   input: string;
+  parseAttributes: boolean;
 
-  constructor(input: string) {
+  constructor(input: string, parseAttributes: boolean = false) {
     this.tokens = [] as LexemeTag[];
     this.input = input;
     this.start = 0;
     this.line = 1;
     this.current = 0;
+    this.parseAttributes = parseAttributes;
   }
 
   private isAtEnd() {
@@ -45,13 +47,13 @@ class Scanner {
       | LexemeType.HTML_SELFCLOSING_TAG,
     name: string,
     rawContent: string,
-    restContent = ''
+    attributes: AttributeNode[] = []
   ) {
     if (
       type === LexemeType.HTML_OPENING_TAG ||
       type === LexemeType.HTML_SELFCLOSING_TAG
     ) {
-      this.tokens.push({ type, name, rawContent, restContent });
+      this.tokens.push({ type, name, rawContent, attributes });
     } else if (type === LexemeType.HTML_CLOSING_TAG) {
       this.tokens.push({ type, name, rawContent });
     } else {
@@ -117,8 +119,22 @@ class Scanner {
     }
   }
 
-  private addTag(rawContent: string, name: string, restContent = '') {
-    const cleanName = name.replace(reNonchar, '').toLowerCase();
+  private addTag(rawContent: string, name: string) {
+    const cleanTagName = name.replace(reNonchar, '');
+    const cleanName = cleanTagName.toLowerCase();
+    const attributes: AttributeNode[] = [];
+
+    if (this.parseAttributes) {
+      const attributesRaw = this.matchAttributes(rawContent);
+      let attribute = attributesRaw.next();
+      while(!attribute.done) {
+        const [tagName, _attributeName, value, emptyAttribute, booleanAttribute] = attribute.value;
+        const attributeName = _attributeName || emptyAttribute || booleanAttribute;
+        const attributeValue = value ? value : booleanAttribute ? true : '';
+        (tagName !== cleanTagName) && attributes.push({ type: LexemeType.HTML_TAG_ATTRIBUTE, name: attributeName, value: attributeValue });
+        attribute = attributesRaw.next();
+      }
+    }
 
     if (rawContent[1] === '/') {
       this.addTagToken(LexemeType.HTML_CLOSING_TAG, cleanName, rawContent);
@@ -127,16 +143,21 @@ class Scanner {
         LexemeType.HTML_SELFCLOSING_TAG,
         cleanName,
         rawContent,
-        restContent
+        attributes,
       );
     } else {
       this.addTagToken(
         LexemeType.HTML_OPENING_TAG,
         cleanName,
         rawContent,
-        restContent
+        attributes
       );
     }
+  }
+
+  private matchAttributes(rawContent: string) {
+    const attributes = rawContent.matchAll(/(\w+)=["']((?:.(?!["']\s+(?:\S+)=|\s*\/[>"']))+.)["']|(\w+)=["']["']|(\w+)/g);
+    return attributes;
   }
 
   private match(expected: string) {

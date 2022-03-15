@@ -5,7 +5,7 @@ const test1 = `
   <a>bc<defg<d><br /></d></a>
 
   <STRONG>
-    <img src=abcdef />
+    <img src="abcdef" />
   </STRONG>
 
   x<5; n>3
@@ -18,48 +18,48 @@ const test4 = `<div><b><br /></b> <br/></div>`;
 const test5 = `abc<a>a</a>bc<a>de</a>`;
 
 const test1_expected = [
-  { type: 0, name: 'abc', rawContent: '<abc>', restContent: '' },
+  { type: 0, name: 'abc', rawContent: '<abc>', attributes: [] },
   { type: 3, value: 'xyz' },
   { type: 1, name: 'bca', rawContent: '</bca>' },
   { type: 3, value: '  ' },
-  { type: 0, name: 'a', rawContent: '<a>', restContent: '' },
+  { type: 0, name: 'a', rawContent: '<a>', attributes: [] },
   { type: 3, value: 'bc' },
   { type: 3, value: '<defg' },
-  { type: 0, name: 'd', rawContent: '<d>', restContent: '' },
-  { type: 2, name: 'br', rawContent: '<br />', restContent: '' },
+  { type: 0, name: 'd', rawContent: '<d>', attributes: [] },
+  { type: 2, name: 'br', rawContent: '<br />', attributes: [] },
   { type: 1, name: 'd', rawContent: '</d>' },
   { type: 1, name: 'a', rawContent: '</a>' },
   { type: 3, value: '  ' },
-  { type: 0, name: 'strong', rawContent: '<STRONG>', restContent: '' },
+  { type: 0, name: 'strong', rawContent: '<STRONG>', attributes: [] },
   { type: 3, value: '    ' },
-  { type: 2, name: 'img', rawContent: '<img src=abcdef />', restContent: '' },
+  { type: 2, name: 'img', rawContent: '<img src="abcdef" />', attributes: [{ type: 4, name: 'src', value: 'abcdef' }] },
   { type: 3, value: '  ' },
   { type: 1, name: 'strong', rawContent: '</STRONG>' },
   { type: 3, value: '  x' },
   { type: 3, value: '<' },
   { type: 3, value: '5; n>3\n\n\n    a random string' },
   // { type: 3, value: '' },
-  { type: 0, name: 'br', rawContent: '<br>', restContent: '' }
+  { type: 0, name: 'br', rawContent: '<br>', attributes: [] }
 ];
 const test1_merged_expected = [
-  { type: 0, name: 'abc', rawContent: '<abc>', restContent: '' },
+  { type: 0, name: 'abc', rawContent: '<abc>', attributes: [] },
   { type: 3, value: 'xyz' },
   { type: 1, name: 'bca', rawContent: '</bca>' },
   { type: 3, value: '  ' },
-  { type: 0, name: 'a', rawContent: '<a>', restContent: '' },
+  { type: 0, name: 'a', rawContent: '<a>', attributes: [] },
   { type: 3, value: 'bc<defg' },
-  { type: 0, name: 'd', rawContent: '<d>', restContent: '' },
-  { type: 2, name: 'br', rawContent: '<br />', restContent: '' },
+  { type: 0, name: 'd', rawContent: '<d>', attributes: [] },
+  { type: 2, name: 'br', rawContent: '<br />', attributes: [] },
   { type: 1, name: 'd', rawContent: '</d>' },
   { type: 1, name: 'a', rawContent: '</a>' },
   { type: 3, value: '  ' },
-  { type: 0, name: 'strong', rawContent: '<STRONG>', restContent: '' },
+  { type: 0, name: 'strong', rawContent: '<STRONG>', attributes: [] },
   { type: 3, value: '    ' },
-  { type: 2, name: 'img', rawContent: '<img src=abcdef />', restContent: '' },
+  { type: 2, name: 'img', rawContent: '<img src="abcdef" />', attributes: [{ type: 4, name: 'src', value: 'abcdef' }] },
   { type: 3, value: '  ' },
   { type: 1, name: 'strong', rawContent: '</STRONG>' },
   { type: 3, value: '  x<5; n>3\n\n\n    a random string' },
-  { type: 0, name: 'br', rawContent: '<br>', restContent: '' }
+  { type: 0, name: 'br', rawContent: '<br>', attributes: [] }
 ];
 
 test('simple string', () => {
@@ -76,11 +76,11 @@ test('unicode', () => {
   const result = scanner.scanTokens();
   expect(result).toEqual([
     { type: 3, value: 'ěšč' },
-    { type: 0, name: 'a', rawContent: '<a>', restContent: '' },
+    { type: 0, name: 'a', rawContent: '<a>', attributes: [] },
     { type: 3, value: './\\' },
     { type: 1, name: 'a', rawContent: '</a>' },
     { type: 3, value: '🐞' },
-    { type: 0, name: 'a', rawContent: '<a>', restContent: '' },
+    { type: 0, name: 'a', rawContent: '<a>', attributes: [] },
     { type: 3, value: '🏢☠️' },
     { type: 1, name: 'a', rawContent: '</a>' }
   ]);
@@ -94,7 +94,7 @@ test('broken tags', () => {
 });
 
 test('large test', () => {
-  const scanner = new Scanner(test1);
+  const scanner = new Scanner(test1, true);
 
   const result = scanner.scanTokens();
 
@@ -102,7 +102,7 @@ test('large test', () => {
 });
 
 test('large test with merge', () => {
-  const scanner = new Scanner(test1);
+  const scanner = new Scanner(test1, true);
 
   const result = scanner.scanTokensWithMerge();
 
@@ -119,13 +119,13 @@ test('self closing tags', () => {
       type: 2,
       name: 'br',
       rawContent: '<br />',
-      restContent: ''
+      attributes: []
     },
     {
       type: 2,
       name: 'br',
       rawContent: '<br/>',
-      restContent: ''
+      attributes: []
     }
   ]);
 });
@@ -139,13 +139,13 @@ test('nested tags', () => {
       type: 0,
       name: 'div',
       rawContent: '<div>',
-      restContent: ''
+      attributes: []
     },
     {
       type: 2,
       name: 'br',
       rawContent: '<br />',
-      restContent: ''
+      attributes: []
     },
     {
       type: 3,
@@ -155,7 +155,7 @@ test('nested tags', () => {
       type: 2,
       name: 'br',
       rawContent: '<br/>',
-      restContent: ''
+      attributes: []
     },
     {
       type: 1,

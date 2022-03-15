@@ -2,12 +2,12 @@ import { parse } from '../parser';
 
 test('self-closing', () => {
   expect(parse('<br />')).toEqual([
-    { type: 'tag', tagType: 'br', value: null }
+    { type: 'tag', tagType: 'br', value: null, attributes: [] }
   ]);
 
   expect(parse('<br /><br/>')).toEqual([
-    { type: 'tag', tagType: 'br', value: null },
-    { type: 'tag', tagType: 'br', value: null }
+    { type: 'tag', tagType: 'br', value: null, attributes: [] },
+    { type: 'tag', tagType: 'br', value: null, attributes: [] }
   ]);
 
   expect(parse('<div><br /> <br/></div>')).toEqual([
@@ -15,10 +15,11 @@ test('self-closing', () => {
       type: 'tag',
       tagType: 'div',
       value: [
-        { type: 'tag', tagType: 'br', value: null },
+        { type: 'tag', tagType: 'br', value: null, attributes: [] },
         { type: 'text', value: ' ' },
-        { type: 'tag', tagType: 'br', value: null }
-      ]
+        { type: 'tag', tagType: 'br', value: null, attributes: [] }
+      ],
+      attributes: []
     }
   ]);
 
@@ -30,11 +31,13 @@ test('self-closing', () => {
         {
           type: 'tag',
           tagType: 'b',
-          value: [{ type: 'tag', tagType: 'br', value: null }]
+          value: [{ type: 'tag', tagType: 'br', value: null, attributes: [] }],
+          attributes: []
         },
         { type: 'text', value: ' ' },
-        { type: 'tag', tagType: 'br', value: null }
-      ]
+        { type: 'tag', tagType: 'br', value: null, attributes: [] }
+      ],
+      attributes: []
     }
   ]);
 });
@@ -44,15 +47,15 @@ test('basic', () => {
 
   expect(parse('abc<a>a</a>bc<a>de</a>')).toEqual([
     { type: 'text', value: 'abc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }] },
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }], attributes: [] },
     { type: 'text', value: 'bc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }], attributes: [] }
   ]);
   expect(parse('abc<br />bc<a>de</a>')).toEqual([
     { type: 'text', value: 'abc' },
-    { type: 'tag', tagType: 'br', value: null },
+    { type: 'tag', tagType: 'br', value: null, attributes: [] },
     { type: 'text', value: 'bc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }], attributes: [] }
   ]);
 
   expect(parse('abc<a><b>tagtext</b></a>')).toEqual([
@@ -64,9 +67,11 @@ test('basic', () => {
         {
           type: 'tag',
           tagType: 'b',
-          value: [{ type: 'text', value: 'tagtext' }]
+          value: [{ type: 'text', value: 'tagtext' }],
+          attributes: []
         }
-      ]
+      ],
+      attributes: []
     }
   ]);
 
@@ -79,10 +84,12 @@ test('basic', () => {
         {
           type: 'tag',
           tagType: 'b',
-          value: [{ type: 'text', value: 'tagtext' }]
+          value: [{ type: 'text', value: 'tagtext' }],
+          attributes: []
         },
         { type: 'text', value: 'behind' }
-      ]
+      ],
+      attributes: []
     }
   ]);
 
@@ -90,7 +97,8 @@ test('basic', () => {
     {
       type: 'tag',
       tagType: 'h1',
-      value: [{ type: 'text', value: 'abc' }]
+      value: [{ type: 'text', value: 'abc' }],
+      attributes: []
     }
   ]);
 });
@@ -98,9 +106,9 @@ test('basic', () => {
 test('unicode', () => {
   expect(parse('ěšč<a>./\\</a>🐞<a>🏢☠️</a>')).toEqual([
     { type: 'text', value: 'ěšč' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: './\\' }] },
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: './\\' }], attributes: [] },
     { type: 'text', value: '🐞' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: '🏢☠️' }] }
+    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: '🏢☠️' }], attributes: [] }
   ]);
 });
 
@@ -111,7 +119,8 @@ test('broken tags', () => {
     {
       type: 'tag',
       tagType: 'a',
-      value: [{ type: 'text', value: 'text</no</nope... now' }]
+      value: [{ type: 'text', value: 'text</no</nope... now' }],
+      attributes: []
     }
   ]);
 
@@ -125,9 +134,11 @@ test('broken tags', () => {
         {
           type: 'tag',
           tagType: 'b',
-          value: [{ type: 'text', value: 'tagtext' }]
+          value: [{ type: 'text', value: 'tagtext' }],
+          attributes: []
         }
-      ]
+      ],
+      attributes: []
     }
   ]);
 
@@ -140,10 +151,12 @@ test('broken tags', () => {
         {
           type: 'tag',
           tagType: 'b',
-          value: [{ type: 'text', value: '><>>/</' }]
+          value: [{ type: 'text', value: '><>>/</' }],
+          attributes: []
         },
         { type: 'text', value: 'beh<ind' }
-      ]
+      ],
+      attributes: []
     }
   ]);
 });
