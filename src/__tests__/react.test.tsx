@@ -194,8 +194,8 @@ test('ReactTinyMarkup custom renderers', () => {
 
 test('ReactTinyMarkup attributes', () => {
   const source =
-    '<b class="abc" href="nope.com">show class but not disabled</b>';
-  const expected = '<b class="abc">show class but not disabled</b>';
+    '<b class="abc" href="nope.com">show class but not href</b>';
+  const expected = '<b class="abc">show class but not href</b>';
   expect(
     ReactDOMServer.renderToStaticMarkup(
       <ReactTinyMarkup allowedAttributes={{ class: 'className' }}>
