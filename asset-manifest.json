@@ -1,22 +1,13 @@
 {
   "files": {
-    "main.css": "/react-tiny-markup/static/css/main.76677c61.chunk.css",
-    "main.js": "/react-tiny-markup/static/js/main.e3f4a4d9.chunk.js",
-    "main.js.map": "/react-tiny-markup/static/js/main.e3f4a4d9.chunk.js.map",
-    "runtime-main.js": "/react-tiny-markup/static/js/runtime-main.dcc52abd.js",
-    "runtime-main.js.map": "/react-tiny-markup/static/js/runtime-main.dcc52abd.js.map",
-    "static/js/2.f4631041.chunk.js": "/react-tiny-markup/static/js/2.f4631041.chunk.js",
-    "static/js/2.f4631041.chunk.js.map": "/react-tiny-markup/static/js/2.f4631041.chunk.js.map",
+    "main.css": "/react-tiny-markup/static/css/main.a370ac6a.css",
+    "main.js": "/react-tiny-markup/static/js/main.51c31336.js",
     "index.html": "/react-tiny-markup/index.html",
-    "precache-manifest.5431e080a5b2de7d78d1fa06ccf854e2.js": "/react-tiny-markup/precache-manifest.5431e080a5b2de7d78d1fa06ccf854e2.js",
-    "service-worker.js": "/react-tiny-markup/service-worker.js",
-    "static/css/main.76677c61.chunk.css.map": "/react-tiny-markup/static/css/main.76677c61.chunk.css.map",
-    "static/js/2.f4631041.chunk.js.LICENSE.txt": "/react-tiny-markup/static/js/2.f4631041.chunk.js.LICENSE.txt"
+    "main.a370ac6a.css.map": "/react-tiny-markup/static/css/main.a370ac6a.css.map",
+    "main.51c31336.js.map": "/react-tiny-markup/static/js/main.51c31336.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.dcc52abd.js",
-    "static/js/2.f4631041.chunk.js",
-    "static/css/main.76677c61.chunk.css",
-    "static/js/main.e3f4a4d9.chunk.js"
+    "static/css/main.a370ac6a.css",
+    "static/js/main.51c31336.js"
   ]
 }
