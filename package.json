@@ -12,6 +12,7 @@
     "parser"
   ],
   "scripts": {
+    "size": "gzip -c dist/index.es.js | wc -c",
     "prepublishOnly": "npm test && npm run build",
     "build": "rm -rf ./dist && rollup -c",
     "postpublish": "cd ./docs; npm run deploy",
