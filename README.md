@@ -1,6 +1,6 @@
 # react-tiny-markup <!--![ ](https://badgen.net/bundlephobia/minzip/react-tiny-markup) -->
 
-This component aims to parse a simple markup language nontechnical users may input - typically `<i>` and `<b>` tags. It will never be a complete HTML5 parser (tag nesting validation, autoclosing tags - none of that). I wanted a smaller (~2.4kB vs ~60+kB) alternative to [sanitize-html](https://www.npmjs.com/package/sanitize-html).
+This component aims to parse a simple markup language nontechnical users may input - typically `<i>`, `<b>` and `<img />` tags. It will never be a complete HTML5 parser (tag nesting validation, autoclosing tags - none of that). I wanted a smaller (~2.4kB vs ~60+kB) alternative to [sanitize-html](https://www.npmjs.com/package/sanitize-html).
 
 ### Security:
 
@@ -53,4 +53,16 @@ const str = 'abc<strong>a</strong>b<i>c</i>d<b>e</b>';
   {str}
 </ReactTinyMarkup>
 // abc<i>a</i>b<i>c</i>d<b>e</b>
+```
+
+```JSX
+// Parse tags with attributes
+const str = 'Look at this <em class="red">dog</em> <img src="dog.jpg" alt="my dog" />';
+<ReactTinyMarkup
+  allowedAttributes={{ img: '', alt: '', class: 'className' }}
+>
+  {str}
+</ReactTinyMarkup>
+// renders
+// <>Look at this <em className="red">dog</em> <img src="dog.jpg" alt="my dog" /></>
 ```
