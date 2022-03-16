@@ -6,26 +6,7 @@
 
 import React, { createElement } from 'react';
 import ReactDOMServer from 'react-dom/server';
-import ReactTinyMarkup, { ElementRenderer, defaultRenderer } from '../index';
-
-test('ElementRenderer', () => {
-  expect(
-    ReactDOMServer.renderToStaticMarkup(
-      <ElementRenderer
-        struct={[
-          { type: 'text', value: 'abc' },
-          { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }] },
-          { type: 'text', value: 'bc' },
-          { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
-        ]}
-        allowedAttributes={{}}
-        renderer={({ children, tag, key }) =>
-          tag === 'a' ? <strong key={key}>{children}</strong> : null
-        }
-      />
-    )
-  ).toEqual('abc<strong>a</strong>bc<strong>de</strong>');
-});
+import ReactTinyMarkup, { defaultRenderer } from '../index';
 
 test('ReactTinyMarkup basic examples', () => {
   const str = 'abc<strong>a</strong>bcde';

@@ -1,14 +1,17 @@
+// to be executed individually `npm run test:perf`
 import { parse } from '../parser';
-import { large, textWithTags } from './seed-large';
+import { large, textWithTags } from './test-data/seed-large';
 
 describe('performance tests', () => {
   // Both should be around ~1MB
   const seedStructured = Array.from({ length: 800 }).fill(large).join('');
   const seedFlatText = Array.from({ length: 125 }).fill(textWithTags).join('');
-  console.log('Data sizes:', {
-    seedStructured: seedStructured.length,
-    seedFlatText: seedFlatText.length
-  });
+
+  // Uncomment to verify seed size
+  // console.log('Data sizes:', {
+  //   seedStructured: seedStructured.length,
+  //   seedFlatText: seedFlatText.length
+  // });
 
   it('structured document with a lot of nested tags', async () => {
     const parsed = parse(seedStructured);

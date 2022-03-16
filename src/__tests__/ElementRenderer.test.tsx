@@ -4,11 +4,30 @@
  * any non-escaped HTML in the output was successfully parsed as HTML tag.
  */
 
-import React, { createElement } from 'react';
+import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import ReactTinyMarkup, { ElementRenderer, defaultRenderer } from '../index';
+import { ElementRenderer } from '../index';
 
-test('ElementRenderer', () => {
+test('ElementRenderer basic', () => {
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ElementRenderer
+        struct={[
+          { type: 'text', value: 'abc' },
+          { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }] },
+          { type: 'text', value: 'bc' },
+          { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
+        ]}
+        allowedAttributes={{}}
+        renderer={({ children, tag, key }) =>
+          tag === 'a' ? <strong key={key}>{children}</strong> : null
+        }
+      />
+    )
+  ).toEqual('abc<strong>a</strong>bc<strong>de</strong>');
+});
+
+test('ElementRenderer attributes', () => {
   expect(
     ReactDOMServer.renderToStaticMarkup(
       <ElementRenderer
