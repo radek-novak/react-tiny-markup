@@ -8,7 +8,7 @@ It doesn't use `dangerouslySetInnerHTML`.
 
 ### Examples:
 
-[Try it out](https://radek-novak.github.io/react-tiny-markup/)
+<!-- [Try it out](https://radek-novak.github.io/react-tiny-markup/) -->
 
 ```JSX
 // replace or remove tags
