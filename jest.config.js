@@ -6,7 +6,7 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/', '/dist'],
   globals: {
     'ts-jest': {
-      tsConfig: {
+      tsconfig: {
         target: 'es5',
         esModuleInterop: true,
         jsx: 'react'
