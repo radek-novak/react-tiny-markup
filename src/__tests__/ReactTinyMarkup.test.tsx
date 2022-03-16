@@ -6,25 +6,7 @@
 
 import React, { createElement } from 'react';
 import ReactDOMServer from 'react-dom/server';
-import ReactTinyMarkup, { ElementRenderer, defaultRenderer } from '../index';
-
-test('ElementRenderer', () => {
-  expect(
-    ReactDOMServer.renderToStaticMarkup(
-      <ElementRenderer
-        struct={[
-          { type: 'text', value: 'abc' },
-          { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }] },
-          { type: 'text', value: 'bc' },
-          { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }] }
-        ]}
-        renderer={({ children, tag, key }) =>
-          tag === 'a' ? <strong key={key}>{children}</strong> : null
-        }
-      />
-    )
-  ).toEqual('abc<strong>a</strong>bc<strong>de</strong>');
-});
+import ReactTinyMarkup, { defaultRenderer } from '../index';
 
 test('ReactTinyMarkup basic examples', () => {
   const str = 'abc<strong>a</strong>bcde';
@@ -189,4 +171,54 @@ test('ReactTinyMarkup custom renderers', () => {
       </ReactTinyMarkup>
     )
   ).toEqual('innerinvi<bbb>s</bbb>ible<bbb>left in</bbb>');
+});
+
+test('ReactTinyMarkup attributes', () => {
+  const source = '<b class="abc" href="nope.com">show class but not href</b>';
+  const expected = '<b class="abc">show class but not href</b>';
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup allowedAttributes={{ class: 'className' }}>
+        {source}
+      </ReactTinyMarkup>
+    )
+  ).toEqual(expected);
+});
+
+test('ReactTinyMarkup attributes with custom renderer', () => {
+  const source = `<b class="abc" href="nope.com">show class but not disabled</b><img alt="none" src="yep.com"/><img  src="nope.com"/>`;
+  const expected = `<bbb class="abc" title="b">show class but not disabled</bbb><img alt="NONE" src="yep.com"/><img src="nope.com" alt=""/>`;
+
+  expect(
+    ReactDOMServer.renderToStaticMarkup(
+      <ReactTinyMarkup
+        allowedAttributes={{ class: 'className', src: '', alt: '' }}
+        renderer={p => {
+          if (p.tag === 'b') {
+            return createElement(
+              'bbb',
+              { key: p.key, ...p.attributes, title: p.tag },
+              p.children
+            );
+          }
+
+          if (p.tag === 'img') {
+            const props = { key: p.key, ...p.attributes } as any;
+
+            if (!props.alt) {
+              props.alt = '';
+            }
+            if (props.alt === 'none') {
+              props.alt = 'NONE';
+            }
+            return createElement('img', props);
+          }
+
+          return defaultRenderer(p);
+        }}
+      >
+        {source}
+      </ReactTinyMarkup>
+    )
+  ).toEqual(expected);
 });

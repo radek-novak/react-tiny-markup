@@ -47,15 +47,30 @@ test('basic', () => {
 
   expect(parse('abc<a>a</a>bc<a>de</a>')).toEqual([
     { type: 'text', value: 'abc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'a' }], attributes: [] },
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [{ type: 'text', value: 'a' }],
+      attributes: []
+    },
     { type: 'text', value: 'bc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }], attributes: [] }
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [{ type: 'text', value: 'de' }],
+      attributes: []
+    }
   ]);
   expect(parse('abc<br />bc<a>de</a>')).toEqual([
     { type: 'text', value: 'abc' },
     { type: 'tag', tagType: 'br', value: null, attributes: [] },
     { type: 'text', value: 'bc' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: 'de' }], attributes: [] }
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [{ type: 'text', value: 'de' }],
+      attributes: []
+    }
   ]);
 
   expect(parse('abc<a><b>tagtext</b></a>')).toEqual([
@@ -106,9 +121,19 @@ test('basic', () => {
 test('unicode', () => {
   expect(parse('ěšč<a>./\\</a>🐞<a>🏢☠️</a>')).toEqual([
     { type: 'text', value: 'ěšč' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: './\\' }], attributes: [] },
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [{ type: 'text', value: './\\' }],
+      attributes: []
+    },
     { type: 'text', value: '🐞' },
-    { type: 'tag', tagType: 'a', value: [{ type: 'text', value: '🏢☠️' }], attributes: [] }
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [{ type: 'text', value: '🏢☠️' }],
+      attributes: []
+    }
   ]);
 });
 
@@ -158,5 +183,95 @@ test('broken tags', () => {
       ],
       attributes: []
     }
+  ]);
+});
+
+test('attributes', () => {
+  expect(
+    parse(
+      'abc<a href="/url/path" target="_blank" class="hello motos"><b>tagtext</b></a>',
+      true
+    )
+  ).toEqual([
+    { type: 'text', value: 'abc' },
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [
+        {
+          type: 'tag',
+          tagType: 'b',
+          value: [{ type: 'text', value: 'tagtext' }],
+          attributes: []
+        }
+      ],
+      attributes: [
+        {
+          type: 'attribute',
+          attributeName: 'href',
+          value: '/url/path'
+        },
+        {
+          type: 'attribute',
+          attributeName: 'target',
+          value: '_blank'
+        },
+        {
+          type: 'attribute',
+          attributeName: 'class',
+          value: 'hello motos'
+        }
+      ]
+    }
+  ]);
+});
+
+test('attributes with full urls', () => {
+  expect(
+    parse('abc<a href="https://abc.de/ab/cd?p1=a&p2=b4#top">url</a>test', true)
+  ).toEqual([
+    { type: 'text', value: 'abc' },
+    {
+      type: 'tag',
+      tagType: 'a',
+      value: [{ type: 'text', value: 'url' }],
+      attributes: [
+        {
+          type: 'attribute',
+          attributeName: 'href',
+          value: 'https://abc.de/ab/cd?p1=a&p2=b4#top'
+        }
+      ]
+    },
+    { type: 'text', value: 'test' }
+  ]);
+});
+
+test('attributes self-closing tags and no content/boolean attributes', () => {
+  expect(parse('abc<input autofocus class="" disabled/>test', true)).toEqual([
+    { type: 'text', value: 'abc' },
+    {
+      type: 'tag',
+      tagType: 'input',
+      value: null,
+      attributes: [
+        {
+          type: 'attribute',
+          attributeName: 'autofocus',
+          value: true
+        },
+        {
+          type: 'attribute',
+          attributeName: 'class',
+          value: ''
+        },
+        {
+          type: 'attribute',
+          attributeName: 'disabled',
+          value: true
+        }
+      ]
+    },
+    { type: 'text', value: 'test' }
   ]);
 });

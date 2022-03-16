@@ -17,6 +17,7 @@
     "postpublish": "cd ./docs; npm run deploy",
     "type-check": "tsc --noEmit",
     "test": "jest",
+    "test:perf": "npm run test -- src/__tests__/speed.test.ts",
     "test:watch": "jest --watch"
   },
   "author": "",
