@@ -174,8 +174,7 @@ test('ReactTinyMarkup custom renderers', () => {
 });
 
 test('ReactTinyMarkup attributes', () => {
-  const source =
-    '<b class="abc" href="nope.com">show class but not href</b>';
+  const source = '<b class="abc" href="nope.com">show class but not href</b>';
   const expected = '<b class="abc">show class but not href</b>';
   expect(
     ReactDOMServer.renderToStaticMarkup(
@@ -193,7 +192,7 @@ test('ReactTinyMarkup attributes with custom renderer', () => {
   expect(
     ReactDOMServer.renderToStaticMarkup(
       <ReactTinyMarkup
-        allowedAttributes={{ class: 'className', src: 'src', alt: 'alt' }}
+        allowedAttributes={{ class: 'className', src: '', alt: '' }}
         renderer={p => {
           if (p.tag === 'b') {
             return createElement(
